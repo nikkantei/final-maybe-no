@@ -124,6 +124,10 @@ export default function App() {
         });
         const data = await res.json();
         setVision(data.vision || '⚠️ No refined vision generated.');
+
+const paragraphs = (data.vision || '').split('\n').filter(p => p.trim());
+setEditableVision(paragraphs);
+setIsEditing(paragraphs.map(() => false));
       }
 
       if (mode === 'regenerateImage') {
