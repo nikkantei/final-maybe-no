@@ -242,11 +242,37 @@ Make it peaceful, inspiring, and detailed with vibrant colors.
             📄 Download as PDF
           </button>
 
-          <div
-            dangerouslySetInnerHTML={{
-              __html: vision.replace(/\n/g, '<br />')
-            }}
-          />
+<div className="editable-vision">
+  {editableVision.map((para, idx) => (
+    <div key={idx} className="editable-block">
+      {isEditing[idx] ? (
+        <textarea
+          value={para}
+          onChange={e => {
+            const updated = [...editableVision];
+            updated[idx] = e.target.value;
+            setEditableVision(updated);
+          }}
+          onBlur={() => {
+            const updated = [...isEditing];
+            updated[idx] = false;
+            setIsEditing(updated);
+            setVision(editableVision.join('\n'));
+          }}
+          autoFocus
+        />
+      ) : (
+        <p onClick={() => {
+          const updated = [...isEditing];
+          updated[idx] = true;
+          setIsEditing(updated);
+        }}>
+          {para}
+        </p>
+      )}
+    </div>
+  ))}
+</div>
 
           <div className="feedback-buttons">
             <button onClick={() => askFollowUps('refineVision')}>
