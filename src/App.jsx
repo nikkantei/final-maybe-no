@@ -13,6 +13,8 @@ export default function App() {
   const [followUpQs, setFollowUpQs]           = useState([]);
   const [followUpAnswers, setFollowUpAnswers] = useState({});
   const [mode, setMode]                       = useState(null); // "refineVision" | "regenerateImage"
+  const [editableVision, setEditableVision] = useState([]);
+const [isEditing, setIsEditing] = useState([]);
 
   /* ─── Constants ───────────────────────────────────────────────── */
   const questions = { 
@@ -83,6 +85,9 @@ const generate = async () => {
     const data = await res.json();
     const generatedVision = data.vision || '⚠️ No vision generated.';
     setVision(generatedVision);
+    const paragraphs = generatedVision.split('\n').filter(p => p.trim());
+setEditableVision(paragraphs);
+setIsEditing(paragraphs.map(() => false));
 
     // 🧠 Also set paragraph editing (if you're using editableVision)
     const paragraphs = generatedVision.split('\n').filter(p => p.trim());
@@ -143,6 +148,9 @@ Use vibrant colors. The mood should be inspiring and peaceful.
         });
         const data = await res.json();
         setVision(data.vision || '⚠️ No refined vision generated.');
+        const paragraphs = (data.vision || '').split('\n').filter(p => p.trim());
+setEditableVision(paragraphs);
+setIsEditing(paragraphs.map(() => false));
 
 const paragraphs = (data.vision || '').split('\n').filter(p => p.trim());
 setEditableVision(paragraphs);
