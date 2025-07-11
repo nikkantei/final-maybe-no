@@ -211,6 +211,7 @@ Make it peaceful, inspiring, and detailed with vibrant colors.
                 value={answers[q] || ''}
                 onChange={e => handleAnswer(q, e.target.value)}
                 placeholder="Your answer…"
+                  maxLength={500}
               />
             </div>
           ))}
@@ -269,6 +270,7 @@ Make it peaceful, inspiring, and detailed with vibrant colors.
                 value={followUpAnswers[q] || ''}
                 onChange={e =>
                   setFollowUpAnswers(prev => ({ ...prev, [q]: e.target.value }))
+                    maxLength={500}
                 }
               />
             </div>
