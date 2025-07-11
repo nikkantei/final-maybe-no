@@ -16,6 +16,7 @@ export default function App() {
   const [editableVision, setEditableVision] = useState([]);
 const [isEditing, setIsEditing] = useState([]);
   const [showIntro, setShowIntro] = useState(true);
+  const [visionTitle, setVisionTitle] = useState('');
 
   /* ─── Constants ───────────────────────────────────────────────── */
   const questions = { 
@@ -253,6 +254,13 @@ return (
         {vision && (
           <div className="card output">
             <h2>🌍 Vision for 2050</h2>
+            <input
+  className="vision-title"
+  type="text"
+  placeholder="Enter a custom title..."
+  value={visionTitle}
+  onChange={e => setVisionTitle(e.target.value)}
+/>
             <p className="editable-hint">📝 Click any paragraph to edit it.</p>
             <button onClick={() => downloadAsPDF(vision, imageUrl)}>
               📄 Download as PDF
