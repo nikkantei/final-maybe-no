@@ -221,6 +221,11 @@ Make it peaceful, inspiring, and detailed with vibrant colors.
       )}
 
       {/* Vision output */}
+{loading && (
+  <div className="loading-overlay">
+    <p>✨ Generating your future vision...</p>
+  </div>
+)}
       {vision && (
         <div className="card output">
           <h2>🌍 Vision for 2050</h2>
