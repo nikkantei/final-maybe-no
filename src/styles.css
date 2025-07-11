@@ -118,3 +118,55 @@ textarea {
   padding: 8px;
   margin-bottom: 12px;
 }
+:root {
+  --primary-color: #FF365E;
+  --primary-color-dark: #cc294b;
+  --text-on-primary: #fff;
+}
+
+/* Buttons */
+button {
+  background-color: var(--primary-color);
+  color: var(--text-on-primary);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--primary-color-dark);
+}
+
+/* Selected theme buttons */
+button.selected {
+  background-color: var(--primary-color-dark);
+  color: white;
+}
+
+/* Headings */
+h1, h2, h3 {
+  color: var(--primary-color);
+}
+
+/* Card styling */
+.card.output {
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 0 10px rgba(255, 54, 94, 0.2);
+}
+
+/* Feedback buttons (refine/regenerate) */
+.feedback-buttons button {
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+/* Theme button layout */
+.theme-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
