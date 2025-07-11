@@ -89,11 +89,6 @@ const generate = async () => {
 setEditableVision(paragraphs);
 setIsEditing(paragraphs.map(() => false));
 
-    // 🧠 Also set paragraph editing (if you're using editableVision)
-    const paragraphs = generatedVision.split('\n').filter(p => p.trim());
-    setEditableVision(paragraphs);
-    setIsEditing(paragraphs.map(() => false));
-
     // 2️⃣ Generate image using the full vision text
     const imagePrompt = `
 Create a high-resolution concept-art-style illustration that visually represents this future vision of the UK in 2050:
