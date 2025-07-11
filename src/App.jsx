@@ -149,20 +149,30 @@ setEditableVision(paragraphs);
 setIsEditing(paragraphs.map(() => false));
       }
 
-      if (mode === 'regenerateImage') {
-        const prompt = `
-          Illustration of the UK in 2050:
-          Themes: ${selectedThemes.join(', ')}
-          Answers: ${Object.values(answers).join(', ')}
-          Extra: ${extra}
-        `;
-        const res  = await fetch('/api/generateImage', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt })
-        });
-        const data = await res.json();
-        setImageUrl(data.url || '');
-      }
+if (mode === 'regenerateImage') {
+  const prompt = `
+Create a high-resolution concept-art-style illustration that visually represents this updated future vision of the UK in 2050.
+
+Here is the updated vision:
+"${vision}"
+
+Also reflect these follow-up ideas: ${extra}
+
+Show people, communities, technology, nature, and futuristic architecture working together.
+Make it peaceful, inspiring, and detailed with vibrant colors.
+`;
+
+  console.log("Regenerate Image Prompt:", prompt); // (Optional: Debug)
+
+  const res = await fetch('/api/generateImage', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt })
+  });
+
+  const data = await res.json();
+  setImageUrl(data.url || '');
+}
       setFollowUpQs([]); setFollowUpAnswers({}); setMode(null);
     } catch (e) { console.error(e); }
     finally { setLoading(false); }
