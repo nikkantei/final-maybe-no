@@ -53,4 +53,18 @@ body {
   border: 1px solid #ddd;
   border-radius: 6px;
 }
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 24px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
 
+.output img {
+  max-width: 100%;
+  border-radius: 12px;
+}
