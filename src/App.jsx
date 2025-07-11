@@ -1,6 +1,3 @@
-const [followUpQs, setFollowUpQs] = useState([]);
-const [followUpAnswers, setFollowUpAnswers] = useState({});
-const [mode, setMode] = useState(null); // "refineVision" or "regenerateImage"
 import { downloadAsPDF } from './utils/pdfExport';
 import React, { useState } from 'react';
 import './styles.css';
@@ -11,6 +8,9 @@ export default function App() {
   const [vision, setVision] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [loading, setLoading] = useState(false);
+  const [followUpQs, setFollowUpQs] = useState([]);
+const [followUpAnswers, setFollowUpAnswers] = useState({});
+const [mode, setMode] = useState(null); // "refineVision" or "regenerateImage"
 
   const questions = {
     politics: [
@@ -104,7 +104,16 @@ The image should feel visionary, positive, and human-centered. Avoid generic or 
   };
 
   const selectedQs = selectedThemes.flatMap(theme => questions[theme] || []);
-
+  
+const descriptions = {
+    politics: 'Democracy, power, participation',
+    economy: 'Work, wealth, inequality',
+    society: 'Communities, justice, inclusion',
+    technology: 'AI, digital life, governance',
+    law: 'Rights, rules, future protections',
+    environment: 'Sustainability, climate, nature'
+  };
+  
   return (
     <div className="app">
       <h1>CivicHorizon: Envision the UK in 2050</h1>
