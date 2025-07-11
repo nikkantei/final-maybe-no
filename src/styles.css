@@ -200,3 +200,9 @@ h1, h2, h3 {
   background-color: #FF365E;
   color: white;
 }
+.editable-hint {
+  font-size: 0.9rem;
+  font-style: italic;
+  margin-bottom: 10px;
+  color: #666;
+}
