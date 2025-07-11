@@ -259,4 +259,12 @@ textarea {
   .theme-selector {
     grid-template-columns: repeat(2, 1fr); /* ← insert this */
   }
+    .theme-selector {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .theme-selector button {
+    width: 100%;
+    font-size: 1rem;
+  }
 }
