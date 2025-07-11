@@ -1,9 +1,16 @@
+/* =================== GLOBAL STYLES =================== */
+:root {
+  --primary-color: #FF365E;
+  --primary-color-dark: #cc294b;
+  --text-on-primary: #fff;
+}
+
 body {
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', system-ui, sans-serif;
   background-color: #f9f9f9;
+  color: #222;
   margin: 0;
   padding: 0;
-  color: #222;
 }
 
 .app {
@@ -12,122 +19,112 @@ body {
   padding: 20px;
 }
 
-h1 {
-  color: #FF365E;
-  font-size: 2rem;
-  margin-bottom: 10px;
+/* =================== TYPOGRAPHY =================== */
+h1, h2, h3 {
+  font-weight: 800;
+  color: #222;
+  margin-bottom: 12px;
   text-align: center;
 }
 
+h1 {
+  font-size: 2rem;
+  color: var(--primary-color);
+}
+
 h2 {
-  color: #333;
-  font-size: 1.4rem;
-  margin-top: 30px;
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-size: 1.2rem;
 }
 
 p {
   line-height: 1.6;
 }
 
+/* =================== BUTTONS =================== */
 button {
+  background-color: var(--primary-color);
+  color: var(--text-on-primary);
+  border: none;
+  padding: 10px 16px;
   border-radius: 8px;
-  padding: 10px 18px;
+  font-weight: bold;
   font-size: 1rem;
   cursor: pointer;
+  transition: background 0.3s ease;
 }
 
-.card {
-  background-color: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  margin-top: 24px;
-}
-body {
-  font-family: system-ui, sans-serif;
-  margin: 0;
-  background: #fafafa;
-  color: #222;
+button:hover {
+  background-color: var(--primary-color-dark);
 }
 
-.app {
-  max-width: 780px;
-  margin: 2rem auto;
-  padding: 0 1rem 4rem;
+button.selected {
+  background-color: var(--primary-color-dark);
+  color: white;
 }
 
-.theme-selector button,
-.qa-section button {
-  margin: 0.25rem 0.5rem 0.25rem 0;
-  padding: 0.5rem 0.9rem;
-  border: 1px solid #ccc;
-  background: #fff;
-  cursor: pointer;
-  border-radius: 4px;
+.feedback-buttons button {
+  margin-top: 10px;
+  margin-right: 10px;
 }
 
-.theme-selector button.selected {
-  background: #0057ff;
-  color: #fff;
-  border-color: #0057ff;
-}
-
-.question-block {
-  margin: 1rem 0;
-}
-
-.question-block textarea {
+.generate-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  font-weight: bold;
+  padding: 12px 24px;
+  margin-top: 20px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  display: block;
   width: 100%;
-  min-height: 70px;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.qa-section button {
-  margin-top: 1rem;
-  font-weight: 600;
-}
-
-.output {
-  margin-top: 2rem;
-}
-
-.output img {
-  max-width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
-.card {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-top: 24px;
-  max-width: 800px;
+  max-width: 300px;
   margin-left: auto;
   margin-right: auto;
+  transition: opacity 0.3s ease;
+  opacity: 1;
+  visibility: visible;
+  cursor: pointer;
 }
 
-.output img {
-  max-width: 100%;
-  border-radius: 12px;
-}
-.loading-overlay {
-  text-align: center;
-  font-size: 1.2rem;
-  font-style: italic;
-  padding: 20px;
-}
-/* === Theme selector mobile layout === */
+/* =================== THEME SELECTOR =================== */
 .theme-selector {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 12px;
+  justify-content: flex-start;
+  padding: 10px 0;
   margin-bottom: 20px;
 }
 
-/* === Make textareas responsive === */
+.theme-selector button {
+  flex: 0 0 auto;
+  min-width: 120px;
+  height: 50px;
+  padding: 10px;
+  border: 2px solid var(--primary-color);
+  background-color: white;
+  color: var(--primary-color);
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  text-transform: capitalize;
+  box-sizing: border-box;
+}
+
+.theme-selector button.selected {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* =================== INPUTS =================== */
 textarea {
   width: 100%;
   min-height: 80px;
@@ -135,23 +132,20 @@ textarea {
   padding: 8px;
   resize: vertical;
   box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
-/* === Improve card readability === */
-.card.output {
-  margin-top: 30px;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.08);
-  background: #fff;
+.vision-title {
+  width: 100%;
+  padding: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
-/* === Image responsiveness === */
-.card img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 12px;
-}
 .editable-block p {
   cursor: pointer;
   margin-bottom: 12px;
@@ -163,59 +157,41 @@ textarea {
   padding: 8px;
   margin-bottom: 12px;
 }
-:root {
-  --primary-color: #FF365E;
-  --primary-color-dark: #cc294b;
-  --text-on-primary: #fff;
+
+.editable-hint {
+  font-size: 0.9rem;
+  font-style: italic;
+  margin-bottom: 10px;
+  color: #666;
 }
 
-/* Buttons */
-button {
-  background-color: var(--primary-color);
-  color: var(--text-on-primary);
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s ease;
+/* =================== CARDS =================== */
+.card {
+  background-color: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 24px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-button:hover {
-  background-color: var(--primary-color-dark);
-}
-
-/* Selected theme buttons */
-button.selected {
-  background-color: var(--primary-color-dark);
-  color: white;
-}
-
-/* Headings */
-h1, h2, h3 {
-  color: var(--primary-color);
-}
-
-/* Card styling */
 .card.output {
   border: 2px solid var(--primary-color);
   box-shadow: 0 0 10px rgba(255, 54, 94, 0.2);
+  margin-top: 30px;
+  padding: 20px;
+  background: #fff;
 }
 
-/* Feedback buttons (refine/regenerate) */
-.feedback-buttons button {
-  margin-top: 10px;
-  margin-right: 10px;
+.card img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
 }
 
-/* Theme button layout */
-.theme-selector {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
-  justify-content: center;
-}
+/* =================== INTRO =================== */
 .intro-screen {
   text-align: center;
   margin-top: 100px;
@@ -223,7 +199,7 @@ h1, h2, h3 {
 
 .start-button {
   padding: 10px 20px;
-  background-color: #FF365E;
+  background-color: var(--primary-color);
   color: white;
   font-size: 1.1rem;
   border: none;
@@ -231,45 +207,16 @@ h1, h2, h3 {
   cursor: pointer;
   margin-top: 20px;
 }
-.theme-selector button {
-  margin: 4px;
-  padding: 10px 16px;
-  border: 2px solid #FF365E;
-  background-color: white;
-  color: #FF365E;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 120px;
-  text-align: center;
-  font-weight: bold;
-}
 
-.theme-selector button.selected {
-  background-color: #FF365E;
-  color: white;
-}
-.editable-hint {
-  font-size: 0.9rem;
+/* =================== LOADING =================== */
+.loading-overlay {
+  text-align: center;
+  font-size: 1.2rem;
   font-style: italic;
-  margin-bottom: 10px;
-  color: #666;
-}
-.theme-selector {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-  justify-content: center;
-  align-items: stretch;
+  padding: 20px;
 }
 
-.theme-selector button {
-  flex: 1 1 120px;
-  min-width: 120px;
-  text-align: center;
-  box-sizing: border-box;
-}
+/* =================== MEDIA =================== */
 @media (max-width: 600px) {
   .app {
     padding: 12px;
@@ -310,48 +257,4 @@ h1, h2, h3 {
     height: auto;
   }
 }
-.generate-button {
-  background-color: #FF365E;
-  color: white;
-  border: none;
-  font-weight: bold;
-  padding: 12px 24px;
-  margin-top: 20px;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  display: block;
-  width: 100%;
-  max-width: 300px;
-  margin-left: auto;
-  margin-right: auto;
-  transition: opacity 0.3s ease;
-  opacity: 1;
-  visibility: visible;
-  cursor: pointer;
-}
-.vision-title {
-  width: 100%;
-  padding: 8px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin-bottom: 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-h1, h2, h3 {
-  font-weight: 800;
-  color: #222;
-  margin-bottom: 12px;
-}
 
-h1 {
-  font-size: 2rem;
-}
-
-h2 {
-  font-size: 1.5rem;
-}
-
-h3 {
-  font-size: 1.2rem;
-}
