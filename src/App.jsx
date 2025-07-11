@@ -15,7 +15,38 @@ export default function App() {
   const [mode, setMode]                       = useState(null); // "refineVision" | "regenerateImage"
 
   /* ─── Constants ───────────────────────────────────────────────── */
-  const questions = { /* … your question lists (unchanged) … */ };
+  const questions = { 
+    /* … your question lists (unchanged) … */
+  politics: [
+    'What values should guide political leadership in 2050?',
+    'What should participation look like in a future democracy?',
+    'What power should citizens hold?'
+  ],
+  economy: [
+    'What does a fair economy look like in 2050?',
+    'How is wealth distributed?',
+    'What role does work play in society?'
+  ],
+  society: [
+    'How do communities support each other in 2050?',
+    'What inequalities have been solved?',
+    'What does social justice look like?'
+  ],
+  technology: [
+    'What technologies are essential in 2050?',
+    'How is technology governed?',
+    'What is the relationship between AI and society?'
+  ],
+  law: [
+    'What rights are most important in 2050?',
+    'How is justice maintained?',
+    'What laws protect future generations?'
+  ],
+  environment: [
+    'What does sustainability mean in 2050?',
+    'How are natural resources managed?',
+    'What environmental challenges have we overcome?'
+  ]};
 
   const descriptions = {
     politics:    'Democracy, power, participation',
