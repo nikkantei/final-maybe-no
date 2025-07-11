@@ -15,6 +15,7 @@ export default function App() {
   const [mode, setMode]                       = useState(null); // "refineVision" | "regenerateImage"
   const [editableVision, setEditableVision] = useState([]);
 const [isEditing, setIsEditing] = useState([]);
+  const [showIntro, setShowIntro] = useState(true);
 
   /* ─── Constants ───────────────────────────────────────────────── */
   const questions = { 
@@ -186,128 +187,148 @@ Hopeful, realistic, and inspiring.
   const selectedQs = selectedThemes.flatMap(t => questions[t] || []);
 
   /* ─── Render ─────────────────────────────────────────────────── */
-  return (
-    <div className="app">
-      <h1>CivicHorizon: Envision the UK in 2050</h1>
-
-      {/* Theme selector */}
-      <div className="theme-selector">
-        <p>Select 1–5 themes to explore:</p>
-        {Object.keys(questions).map(theme => (
-          <button
-            key={theme}
-            title={descriptions[theme]}
-            onClick={() => handleThemeToggle(theme)}
-            className={selectedThemes.includes(theme) ? 'selected' : ''}
-          >
-            {theme}
-          </button>
-        ))}
+return (
+  <div className="app">
+    {showIntro && (
+      <div className="intro-screen">
+        <h1>Ministry for the Future</h1>
+        <p>Welcome to CivicHorizon — imagine the UK in 2050.</p>
+        <button className="start-button" onClick={() => setShowIntro(false)}>
+          Start
+        </button>
       </div>
+    )}
 
-      {/* Q&A input */}
-      {selectedQs.length > 0 && (
-        <div className="qa-section">
-          {selectedQs.map((q, i) => (
-            <div key={i} className="question-block">
-              <label><strong>{q}</strong></label>
-              <textarea
-                value={answers[q] || ''}
-                onChange={e => handleAnswer(q, e.target.value)}
-                placeholder="Your answer…"
-              />
-                                maxLength={500}
-            </div>
-          ))}
-          <button onClick={generate} disabled={loading}>
-            {loading ? 'Generating…' : 'Generate Vision'}
-          </button>
-        </div>
-      )}
+    {!showIntro && (
+      <>
+        <h1>CivicHorizon: Envision the UK in 2050</h1>
 
-      {/* Vision output */}
-{loading && (
-  <div className="loading-overlay">
-    <p>✨ Generating your future vision...</p>
-  </div>
-)}
-      {vision && (
-        <div className="card output">
-          <h2>🌍 Vision for 2050</h2>
-          <button onClick={() => downloadAsPDF(vision, imageUrl)}>
-            📄 Download as PDF
-          </button>
-
-<div className="editable-vision">
-  {editableVision.map((para, idx) => (
-    <div key={idx} className="editable-block">
-      {isEditing[idx] ? (
-        <textarea
-          value={para}
-          onChange={e => {
-            const updated = [...editableVision];
-            updated[idx] = e.target.value;
-            setEditableVision(updated);
-          }}
-          onBlur={() => {
-            const updated = [...isEditing];
-            updated[idx] = false;
-            setIsEditing(updated);
-            setVision(editableVision.join('\n'));
-          }}
-          autoFocus
-        />
-      ) : (
-        <p onClick={() => {
-          const updated = [...isEditing];
-          updated[idx] = true;
-          setIsEditing(updated);
-        }}>
-          {para}
-        </p>
-      )}
-    </div>
-  ))}
-</div>
-
-          <div className="feedback-buttons">
-            <button onClick={() => askFollowUps('refineVision')}>
-              🔁 Refine Vision
+        {/* Theme selector */}
+        <div className="theme-selector">
+          <p>Select 1–5 themes to explore:</p>
+          {Object.keys(questions).map(theme => (
+            <button
+              key={theme}
+              title={descriptions[theme]}
+              onClick={() => handleThemeToggle(theme)}
+              className={selectedThemes.includes(theme) ? 'selected' : ''}
+            >
+              {theme}
             </button>
-            <button onClick={() => askFollowUps('regenerateImage')}>
-              🎨 Regenerate Image
+          ))}
+        </div>
+
+        {/* Q&A input */}
+        {selectedQs.length > 0 && (
+          <div className="qa-section">
+            {selectedQs.map((q, i) => (
+              <div key={i} className="question-block">
+                <label><strong>{q}</strong></label>
+                <textarea
+                  value={answers[q] || ''}
+                  onChange={e => handleAnswer(q, e.target.value)}
+                  placeholder="Your answer…"
+                  maxLength={500}
+                />
+              </div>
+            ))}
+            <button onClick={generate} disabled={loading}>
+              {loading ? 'Generating…' : 'Generate Vision'}
             </button>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Image output */}
-      {imageUrl && (
-        <div className="card output">
-          <h2>🎨 Visual Representation</h2>
-          <img src={imageUrl} alt="Generated vision" />
-        </div>
-      )}
+        {/* Loading spinner */}
+        {loading && (
+          <div className="loading-overlay">
+            <p>✨ Generating your future vision...</p>
+          </div>
+        )}
 
-      {/* Follow-up questions */}
-      {followUpQs.length > 0 && (
-        <div className="card output">
-          <h3>📝 Please answer a few follow-up questions:</h3>
-          {followUpQs.map((q, i) => (
-            <div key={i} className="question-block">
-              <label>{q}</label>
-              <textarea
-                value={followUpAnswers[q] || ''}
-                onChange={e =>
-                  setFollowUpAnswers(prev => ({ ...prev, [q]: e.target.value }))
-                }
-                                    maxLength={500}
-              />
+        {/* Vision output */}
+        {vision && (
+          <div className="card output">
+            <h2>🌍 Vision for 2050</h2>
+            <p className="editable-hint">📝 Click any paragraph to edit it.</p>
+            <button onClick={() => downloadAsPDF(vision, imageUrl)}>
+              📄 Download as PDF
+            </button>
+
+            <div className="editable-vision">
+              {editableVision.map((para, idx) => (
+                <div key={idx} className="editable-block">
+                  {isEditing[idx] ? (
+                    <textarea
+                      value={para}
+                      onChange={e => {
+                        const updated = [...editableVision];
+                        updated[idx] = e.target.value;
+                        setEditableVision(updated);
+                      }}
+                      onBlur={() => {
+                        const updated = [...isEditing];
+                        updated[idx] = false;
+                        setIsEditing(updated);
+                        setVision(editableVision.join('\n'));
+                      }}
+                      autoFocus
+                    />
+                  ) : (
+                    <p onClick={() => {
+                      const updated = [...isEditing];
+                      updated[idx] = true;
+                      setIsEditing(updated);
+                    }}>
+                      {para}
+                    </p>
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
-          <button onClick={submitFollowUpAnswers}>Continue</button>
-        </div>
-      )}
-    </div>
-  );
-}
+
+            <div className="feedback-buttons">
+              <button onClick={() => askFollowUps('refineVision')}>
+                🔁 Refine Vision
+              </button>
+              <button onClick={() => askFollowUps('regenerateImage')}>
+                🎨 Regenerate Image
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Image output */}
+        {imageUrl && (
+          <div className="card output">
+            <h2>🎨 Visual Representation</h2>
+            <img src={imageUrl} alt="Generated vision" />
+          </div>
+        )}
+
+        {/* Follow-up questions */}
+        {followUpQs.length > 0 && (
+          <div className="card output">
+            <h3>📝 Please answer a few follow-up questions:</h3>
+            {followUpQs.map((q, i) => (
+              <div key={i} className="question-block">
+                <label>{q}</label>
+                <textarea
+                  value={followUpAnswers[q] || ''}
+                  onChange={e =>
+                    setFollowUpAnswers(prev => ({
+                      ...prev,
+                      [q]: e.target.value
+                    }))
+                  }
+                  maxLength={500}
+                />
+              </div>
+            ))}
+            <button onClick={submitFollowUpAnswers}>Continue</button>
+          </div>
+        )}
+      </>
+    )}
+  </div>
+);
+
