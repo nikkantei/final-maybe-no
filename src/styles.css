@@ -232,15 +232,17 @@ h1, h2, h3 {
   margin-top: 20px;
 }
 .theme-selector button {
-  flex: 1 0 30%;
-  min-width: 120px;
-  padding: 10px;
+  margin: 4px;
+  padding: 10px 16px;
   border: 2px solid #FF365E;
   background-color: white;
   color: #FF365E;
-  font-weight: bold;
   border-radius: 8px;
-  text-transform: capitalize;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  text-align: center;
+  font-weight: bold;
 }
 
 .theme-selector button.selected {
