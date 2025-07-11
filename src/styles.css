@@ -68,3 +68,9 @@ body {
   max-width: 100%;
   border-radius: 12px;
 }
+.loading-overlay {
+  text-align: center;
+  font-size: 1.2rem;
+  font-style: italic;
+  padding: 20px;
+}
