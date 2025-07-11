@@ -107,3 +107,14 @@ textarea {
   height: auto;
   border-radius: 12px;
 }
+.editable-block p {
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+.editable-block textarea {
+  width: 100%;
+  font-size: 1rem;
+  padding: 8px;
+  margin-bottom: 12px;
+}
