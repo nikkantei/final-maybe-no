@@ -154,16 +154,11 @@ const submitFollowUpAnswers = async () => {
     }
 
     if (mode === 'regenerateImage') {
-      const prompt = `
-Create a high-resolution concept-art-style illustration that visually represents this updated future vision of the UK in 2050.
-
-Here is the updated vision:
-"${vision}"
-
-Also reflect these follow-up ideas: ${extra}
-
-Show people, communities, technology, nature, and futuristic architecture working together.
-Make it peaceful, inspiring, and detailed with vibrant colors.
+     const prompt = `
+A vibrant, detailed illustration of life in the UK in 2050.
+Incorporate these ideas: ${extra}.
+Themes include people, community, technology, nature, and architecture.
+Hopeful, realistic, and inspiring.
 `;
 
       const res = await fetch('/api/generateImage', {
