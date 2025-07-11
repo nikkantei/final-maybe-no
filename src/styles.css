@@ -94,32 +94,29 @@ button.selected {
 /* =================== THEME SELECTOR =================== */
 .theme-selector {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(3, 1fr); /* 3 buttons per row */
+  gap: 16px;
   justify-items: center;
-  margin-bottom: 20px;
   max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto 30px;
 }
 
 .theme-selector button {
-  min-width: 100px;
-  height: 50px;
-  padding: 10px;
+  min-width: 120px;
+  height: 60px;
   font-weight: bold;
+  font-size: 1rem;
   border: 2px solid #FF365E;
   background-color: white;
   color: #FF365E;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
   text-transform: capitalize;
-  box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .theme-selector button.selected {
-  background-color: var(--primary-color);
+  background-color: #FF365E;
   color: white;
 }
 
