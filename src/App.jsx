@@ -131,7 +131,7 @@ export default function App() {
       {vision && (
         <div className="output">
           <h2>🌍 Vision for 2050</h2>
-          <pre>{vision}</pre>
+<div dangerouslySetInnerHTML={{ __html: vision.replace(/\n/g, '<br />') }} />
         </div>
       )}
 
