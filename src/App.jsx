@@ -149,10 +149,6 @@ Use vibrant colors. The mood should be inspiring and peaceful.
   setEditableVision(updatedParagraphs);
   setIsEditing(updatedParagraphs.map(() => false));
 }
-
-const paragraphs = (data.vision || '').split('\n').filter(p => p.trim());
-setEditableVision(paragraphs);
-setIsEditing(paragraphs.map(() => false));
       }
 
 if (mode === 'regenerateImage') {
