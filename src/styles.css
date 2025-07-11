@@ -301,6 +301,9 @@ h1, h2, h3 {
   padding: 12px 24px;
   margin-top: 20px;
   border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 .vision-title {
   width: 100%;
