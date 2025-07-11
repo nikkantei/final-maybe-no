@@ -291,4 +291,12 @@ h1, h2, h3 {
     height: auto;
   }
 }
-
+.generate-button {
+  background-color: #FF365E;
+  color: white;
+  border: none;
+  font-weight: bold;
+  padding: 12px 24px;
+  margin-top: 20px;
+  border-radius: 8px;
+}
