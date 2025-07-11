@@ -1,4 +1,4 @@
-import { OpenAI } from 'openai';
+import OpenAI from 'openai';
 
 const openai = new OpenAI({
   apiKey: process.env.VITE_OPENAI_API_KEY // Make sure this is set in your env
