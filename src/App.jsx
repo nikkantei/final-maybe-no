@@ -109,13 +109,14 @@ export default function App() {
   environment: 'Sustainability, climate, nature'
 };
         {Object.keys(questions).map(theme => (
-          <button
-            key={theme}
-            onClick={() => handleThemeToggle(theme)}
-            className={selectedThemes.includes(theme) ? 'selected' : ''}
-          >
-            {theme}
-          </button>
+<button
+  key={theme}
+  title={descriptions[theme]}  // this adds the tooltip
+  onClick={() => handleThemeToggle(theme)}
+  className={selectedThemes.includes(theme) ? 'selected' : ''}
+>
+  {theme}
+</button>
         ))}
       </div>
 
