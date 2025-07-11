@@ -255,7 +255,12 @@ return (
             <button onClick={() => downloadAsPDF(vision, imageUrl)}>
               📄 Download as PDF
             </button>
-
+<button
+  onClick={() => setIsEditing(editableVision.map(() => true))}
+  style={{ marginBottom: '16px', backgroundColor: '#FF365E', color: 'white' }}
+>
+  ✏️ Edit Vision
+</button>
             <div className="editable-vision">
               {editableVision.map((para, idx) => (
                 <div key={idx} className="editable-block">
