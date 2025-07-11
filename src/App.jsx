@@ -131,28 +131,30 @@ Use vibrant colors. The mood should be inspiring and peaceful.
     finally { setLoading(false); }
   };
 
-  const submitFollowUpAnswers = async () => {
-    setLoading(true);
-    const extra = Object.values(followUpAnswers).join(' ');
+const submitFollowUpAnswers = async () => {
+  setLoading(true);
+  const extra = Object.values(followUpAnswers).join(' ');
 
-    try {
-      if (mode === 'refineVision') {
-        const res  = await fetch('/api/generateManifesto', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ answers, extraInfo: extra, mode: 'refine' })
-        });
-        const data = await res.json();
-        setVision(data.vision || '⚠️ No refined vision generated.');
-  const updatedParagraphs = (data.vision || '')
-    .split('\n')
-    .filter(p => p.trim());
-  setEditableVision(updatedParagraphs);
-  setIsEditing(updatedParagraphs.map(() => false));
-}
-      }
+  try {
+    if (mode === 'refineVision') {
+      const res = await fetch('/api/generateManifesto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers, extraInfo: extra, mode: 'refine' })
+      });
 
-if (mode === 'regenerateImage') {
-  const prompt = `
+      const data = await res.json();
+      setVision(data.vision || '⚠️ No refined vision generated.');
+
+      const updatedParagraphs = (data.vision || '')
+        .split('\n')
+        .filter(p => p.trim());
+      setEditableVision(updatedParagraphs);
+      setIsEditing(updatedParagraphs.map(() => false));
+    }
+
+    if (mode === 'regenerateImage') {
+      const prompt = `
 Create a high-resolution concept-art-style illustration that visually represents this updated future vision of the UK in 2050.
 
 Here is the updated vision:
@@ -164,21 +166,26 @@ Show people, communities, technology, nature, and futuristic architecture workin
 Make it peaceful, inspiring, and detailed with vibrant colors.
 `;
 
-  console.log("Regenerate Image Prompt:", prompt); // (Optional: Debug)
+      const res = await fetch('/api/generateImage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
 
-  const res = await fetch('/api/generateImage', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt })
-  });
+      const data = await res.json();
+      setImageUrl(data.url || '');
+    }
 
-  const data = await res.json();
-  setImageUrl(data.url || '');
-}
-      setFollowUpQs([]); setFollowUpAnswers({}); setMode(null);
-    } catch (e) { console.error(e); }
-    finally { setLoading(false); }
-  };
+    // Clear state
+    setFollowUpQs([]);
+    setFollowUpAnswers({});
+    setMode(null);
+  } catch (e) {
+    console.error(e);
+  } finally {
+    setLoading(false);
+  }
+};
 
   /* ─── Derived data ───────────────────────────────────────────── */
   const selectedQs = selectedThemes.flatMap(t => questions[t] || []);
