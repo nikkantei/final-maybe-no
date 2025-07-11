@@ -67,34 +67,55 @@ export default function App() {
     setAnswers(prev => ({ ...prev, [q]: a }));
 
   /* ─── Main “Generate Vision + Image” ──────────────────────────── */
-  const generate = async () => {
-    setLoading(true);
-    setVision(''); setImageUrl('');
+const generate = async () => {
+  setLoading(true);
+  setVision('');
+  setImageUrl('');
 
-    try {
-      // 1️⃣ Vision
-      const res = await fetch('/api/generateManifesto', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers })
-      });
-      const data = await res.json();
-      setVision(data.vision || '⚠️ No vision generated.');
+  try {
+    // 1️⃣ Generate vision
+    const res = await fetch('/api/generateManifesto', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers })
+    });
 
-      // 2️⃣ Image
-const imagePrompt = `
-A hopeful, futuristic illustration of life in the UK in 2050.
-Show people, places, and technologies that reflect values like equality, sustainability, and innovation. Make it realistic, inspiring, and detailed.
+    const data = await res.json();
+    const generatedVision = data.vision || '⚠️ No vision generated.';
+    setVision(generatedVision);
+
+    // 🧠 Also set paragraph editing (if you're using editableVision)
+    const paragraphs = generatedVision.split('\n').filter(p => p.trim());
+    setEditableVision(paragraphs);
+    setIsEditing(paragraphs.map(() => false));
+
+    // 2️⃣ Generate image using the full vision text
+    const imagePrompt = `
+Create a high-resolution concept-art-style illustration that visually represents this future vision of the UK in 2050:
+
+"${generatedVision}"
+
+Focus on futuristic cities, community life, sustainability, diversity, and advanced but ethical technologies.
+Use vibrant colors. The mood should be inspiring and peaceful.
 `;
-      const imgRes  = await fetch('/api/generateImage', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: imagePrompt })
-      });
-      const imgData = await imgRes.json();
-      setImageUrl(imgData.url || '');
-    } catch (err) {
-      console.error(err); setVision('⚠️ Error generating vision.');
-    } finally { setLoading(false); }
-  };
+
+    console.log("Image prompt:", imagePrompt); // (Optional: for debugging)
+
+    const imgRes = await fetch('/api/generateImage', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: imagePrompt })
+    });
+
+    const imgData = await imgRes.json();
+    setImageUrl(imgData.url || '');
+  } catch (err) {
+    console.error(err);
+    setVision('⚠️ Error generating vision.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   /* ─── Follow-up pipeline ─────────────────────────────────────── */
   const askFollowUps = async (target) => {
