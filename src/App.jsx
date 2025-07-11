@@ -148,9 +148,12 @@ Use vibrant colors. The mood should be inspiring and peaceful.
         });
         const data = await res.json();
         setVision(data.vision || '⚠️ No refined vision generated.');
-        const paragraphs = (data.vision || '').split('\n').filter(p => p.trim());
-setEditableVision(paragraphs);
-setIsEditing(paragraphs.map(() => false));
+  const updatedParagraphs = (data.vision || '')
+    .split('\n')
+    .filter(p => p.trim());
+  setEditableVision(updatedParagraphs);
+  setIsEditing(updatedParagraphs.map(() => false));
+}
 
 const paragraphs = (data.vision || '').split('\n').filter(p => p.trim());
 setEditableVision(paragraphs);
