@@ -138,20 +138,17 @@ export default function App() {
         </div>
       )}
 
-      {vision && (
-        <div className="output">
-          <h2>🌍 Vision for 2050</h2>
-         <button onClick={() => downloadAsPDF(vision, imageUrl)}>📄 Download as PDF</button>
-<div dangerouslySetInnerHTML={{ __html: vision.replace(/\n/g, '<br />') }} />
-        </div>
-      )}
+{vision && (
+  <div className="card output">
+    <h2>🌍 Vision for 2050</h2>
+    <button onClick={() => downloadAsPDF(vision, imageUrl)}>📄 Download as PDF</button>
+    <div dangerouslySetInnerHTML={{ __html: vision.replace(/\n/g, '<br />') }} />
+  </div>
+)}
 
-      {imageUrl && (
-        <div className="output">
-          <h2>🎨 Visual Representation</h2>
-          <img src={imageUrl} alt="Generated vision" />
-        </div>
-      )}
-    </div>
-  );
-}
+{imageUrl && (
+  <div className="card output">
+    <h2>🎨 Visual Representation</h2>
+    <img src={imageUrl} alt="Generated vision" />
+  </div>
+)}
