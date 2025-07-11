@@ -250,6 +250,7 @@ return (
         {vision && (
           <div className="card output">
             <h2>🌍 Vision for 2050</h2>
+              <p className="editable-hint">📝 Click any paragraph below to edit it.</p>
             <input
   className="vision-title"
   type="text"
@@ -257,7 +258,6 @@ return (
   value={visionTitle}
   onChange={e => setVisionTitle(e.target.value)}
 />
-            <p className="editable-hint">📝 Click any paragraph to edit it.</p>
             <button onClick={() => downloadAsPDF(vision, imageUrl)}>
               📄 Download as PDF
             </button>
