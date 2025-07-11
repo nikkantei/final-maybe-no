@@ -100,6 +100,14 @@ export default function App() {
 
       <div className="theme-selector">
         <p>Select 1–5 themes to explore:</p>
+        const descriptions = {
+  politics: 'Democracy, power, participation',
+  economy: 'Work, wealth, inequality',
+  society: 'Communities, justice, inclusion',
+  technology: 'AI, digital life, governance',
+  law: 'Rights, rules, future protections',
+  environment: 'Sustainability, climate, nature'
+};
         {Object.keys(questions).map(theme => (
           <button
             key={theme}
