@@ -81,12 +81,10 @@ export default function App() {
       setVision(data.vision || '⚠️ No vision generated.');
 
       // 2️⃣ Image
-      const imagePrompt = `
-        An artistic, detailed illustration of the UK in 2050:
-        Themes: ${selectedThemes.join(', ')}
-        Key ideas: ${Object.values(answers).join(', ')}
-        Visionary, positive, human-centered.
-      `;
+const imagePrompt = `
+A hopeful, futuristic illustration of life in the UK in 2050.
+Show people, places, and technologies that reflect values like equality, sustainability, and innovation. Make it realistic, inspiring, and detailed.
+`;
       const imgRes  = await fetch('/api/generateImage', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: imagePrompt })
