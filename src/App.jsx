@@ -216,7 +216,7 @@ return (
         </div>
 
         {/* Q&A input */}
-        {selectedQs.length > 0 && (
+{selectedThemes.length > 0 && (
           <div className="qa-section">
             {selectedQs.map((q, i) => (
               <div key={i} className="question-block">
