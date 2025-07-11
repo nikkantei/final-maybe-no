@@ -1,14 +1,5 @@
-// utils/pdfExport.js
 import jsPDF from "jspdf";
 
-/**
- * Creates a multi-page PDF that contains:
- *  • the generated image (scaled to fit)
- *  • the complete vision text (wrapped & paginated)
- *
- * @param {string} visionText – plain-text vision
- * @param {string} imageUrl  – data-URL or remote URL to the generated image
- */
 export function downloadAsPDF(visionText, imageUrl = "") {
   const doc = new jsPDF({
     orientation: "portrait",
@@ -21,29 +12,27 @@ export function downloadAsPDF(visionText, imageUrl = "") {
   const margin     = 40;
   let cursorY      = margin;
 
-  /* ─── 1. IMAGE ─────────────────────────────────────────────────────────── */
-  if (imageUrl) {
-    // Reserve a fixed  seed height (200 pt) – tweak if you need larger images.
-    const imgHeight = 200;
-    const imgWidth  = pageWidth - margin * 2;
+  // Add image (only if it's valid)
+  const imgWidth = pageWidth - margin * 2;
+  const imgHeight = 200;
 
-    // addImage(src, format, x, y, w, h)
-    doc.addImage(imageUrl, "JPEG", margin, cursorY, imgWidth, imgHeight);
-
-    cursorY += imgHeight + 20;           // 20 pt spacing below the image
+  if (
+    imageUrl &&
+    (imageUrl.startsWith('data:image') || imageUrl.startsWith('http'))
+  ) {
+    try {
+      doc.addImage(imageUrl, "JPEG", margin, cursorY, imgWidth, imgHeight);
+      cursorY += imgHeight + 20;
+    } catch (err) {
+      console.error("Image could not be added to PDF:", err);
+    }
   }
 
-  /* ─── 2. VISION TEXT (wrapped & paginated) ─────────────────────────────── */
-  const maxLineWidth = pageWidth - margin * 2;
-  const lineHeight   = 18;               // line spacing in pt
-
-  const lines = doc
-    .setFont("Times", "Normal")
-    .setFontSize(12)
-    .splitTextToSize(visionText, maxLineWidth);
+  // Add wrapped text with page breaks
+  const lineHeight = 20;
+  const lines = doc.splitTextToSize(visionText, pageWidth - 2 * margin);
 
   lines.forEach(line => {
-    /* add a new page if we’re about to run off the bottom margin */
     if (cursorY + lineHeight > pageHeight - margin) {
       doc.addPage();
       cursorY = margin;
@@ -52,6 +41,5 @@ export function downloadAsPDF(visionText, imageUrl = "") {
     cursorY += lineHeight;
   });
 
-  /* ─── 3. SAVE ──────────────────────────────────────────────────────────── */
   doc.save("vision-2050.pdf");
 }
