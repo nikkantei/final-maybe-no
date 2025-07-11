@@ -75,7 +75,15 @@ export default function App() {
       }
 
       // 🎨 Generate image
-      const imagePrompt = `A hopeful long-term vision of the UK in 2050 based on: ${Object.values(answers).join(', ')}. Minimalist, inspiring illustration.`;
+const imagePrompt = `
+An artistic, detailed illustration of the UK in 2050 that reflects the following themes and ideas:
+${selectedThemes.join(', ')}
+
+Key concepts from user answers:
+${Object.values(answers).join(', ')}
+
+The image should feel visionary, positive, and human-centered. Avoid generic or abstract visuals. Show scenes that reflect values, communities, technologies, and environments of the future.
+`;
       const imgRes = await fetch('/api/generateImage', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
