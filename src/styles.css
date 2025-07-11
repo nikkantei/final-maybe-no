@@ -185,3 +185,18 @@ h1, h2, h3 {
   cursor: pointer;
   margin-top: 20px;
 }
+.theme-selector button {
+  margin: 4px;
+  padding: 10px 16px;
+  border: 2px solid #FF365E;
+  background-color: white;
+  color: #FF365E;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.theme-selector button.selected {
+  background-color: #FF365E;
+  color: white;
+}
