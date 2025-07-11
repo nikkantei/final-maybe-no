@@ -1,3 +1,6 @@
+const [followUpQs, setFollowUpQs] = useState([]);
+const [followUpAnswers, setFollowUpAnswers] = useState({});
+const [mode, setMode] = useState(null); // "refineVision" or "regenerateImage"
 import { downloadAsPDF } from './utils/pdfExport';
 import React, { useState } from 'react';
 import './styles.css';
