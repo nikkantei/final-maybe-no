@@ -91,22 +91,16 @@ const generate = async () => {
 setEditableVision(paragraphs);
 setIsEditing(paragraphs.map(() => false));
 
-// 2️⃣ Generate image using a shortened prompt (to avoid 1000-char limit)
-const imagePrompt = `
-UK in 2050. Hopeful, detailed concept-art scene with green cities, diverse people, and advanced technology in harmony. Vibrant colors. Inspiring mood.
-`;
+// 2️⃣ Generate image using the vision text
+const imageRes = await fetch('/api/generateImage', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ visionText: generatedVision })
+});
 
+const imageData = await imageRes.json();
+setImageUrl(imageData.url || '');
 
-    console.log("Image prompt:", imagePrompt); // (Optional: for debugging)
-
-    const imgRes = await fetch('/api/generateImage', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: imagePrompt })
-    });
-
-    const imgData = await imgRes.json();
-    setImageUrl(imgData.url || '');
   } catch (err) {
     console.error(err);
     setVision('⚠️ Error generating vision.');
