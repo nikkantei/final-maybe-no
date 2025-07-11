@@ -232,7 +232,11 @@ return (
                 />
               </div>
             ))}
-            <button onClick={generate} disabled={loading}>
+<button
+  className="generate-button"
+  onClick={generate}
+  disabled={loading}
+>
               {loading ? 'Generating…' : 'Generate Vision'}
             </button>
           </div>
