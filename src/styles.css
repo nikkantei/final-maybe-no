@@ -253,4 +253,10 @@ textarea {
     height: auto;
   }
 }
+@media (max-width: 600px) {
+  ...
 
+  .theme-selector {
+    grid-template-columns: repeat(2, 1fr); /* ← insert this */
+  }
+}
