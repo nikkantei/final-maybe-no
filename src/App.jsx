@@ -91,15 +91,11 @@ const generate = async () => {
 setEditableVision(paragraphs);
 setIsEditing(paragraphs.map(() => false));
 
-    // 2️⃣ Generate image using the full vision text
-    const imagePrompt = `
-Create a high-resolution concept-art-style illustration that visually represents this future vision of the UK in 2050:
-
-"${generatedVision}"
-
-Focus on futuristic cities, community life, sustainability, diversity, and advanced but ethical technologies.
-Use vibrant colors. The mood should be inspiring and peaceful.
+// 2️⃣ Generate image using a shortened prompt (to avoid 1000-char limit)
+const imagePrompt = `
+UK in 2050. Hopeful, detailed concept-art scene with green cities, diverse people, and advanced technology in harmony. Vibrant colors. Inspiring mood.
 `;
+
 
     console.log("Image prompt:", imagePrompt); // (Optional: for debugging)
 
