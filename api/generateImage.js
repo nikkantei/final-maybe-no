@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 export default async function handler(req, res) {
@@ -16,20 +16,23 @@ export default async function handler(req, res) {
   }
 
   try {
+    const imagePrompt = `
+    A vivid, optimistic concept art of the United Kingdom in 2050.
+
+    Show sustainable cities with green rooftops, thriving communities, diverse people collaborating, clean energy infrastructure (like wind and solar), futuristic public transport, and natural landscapes integrated with technology.
+
+    Use vibrant colors, soft lighting, and cinematic detail. The scene should be peaceful, inspiring, and full of life — like a utopian future made real.
+    `.trim();
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4-1106-preview",
       messages: [
         {
           role: "user",
-          content: [
-            {
-              type: "text",
-              text: prompt
-            }
-          ]
-        }
+          content: [{ type: "text", text: imagePrompt }],
+        },
       ],
-      tools: [{ type: "image_generation" }]
+      tools: [{ type: "image_generation" }],
     });
 
     const toolCall = completion.choices?.[0]?.message?.tool_calls?.[0];
