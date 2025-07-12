@@ -185,3 +185,14 @@ textarea {
   border-radius: 12px;
   margin-top: 20px;
 }
+.theme-section {
+  margin: 32px auto;
+  max-width: 720px;
+}
+
+.theme-instruction {
+  margin-bottom: 12px;
+  font-weight: bold;
+  font-size: 1.1em;
+  text-align: center;
+}
