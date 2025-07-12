@@ -17,14 +17,38 @@ export default function App() {
   const [followUpAnswers, setFollowUpAnswers] = useState({});
   const [mode, setMode] = useState(null);
 
-  const questions = {
-    politics: [...],
-    economy: [...],
-    society: [...],
-    technology: [...],
-    law: [...],
-    environment: [...]
-  };
+const questions = {
+  politics: [
+    'What values should guide political leadership in 2050?',
+    'What should participation look like in a future democracy?',
+    'What power should citizens hold?'
+  ],
+  economy: [
+    'What does a fair economy look like in 2050?',
+    'How is wealth distributed?',
+    'What role does work play in society?'
+  ],
+  society: [
+    'How do communities support each other in 2050?',
+    'What inequalities have been solved?',
+    'What does social justice look like?'
+  ],
+  technology: [
+    'What technologies are essential in 2050?',
+    'How is technology governed?',
+    'What is the relationship between AI and society?'
+  ],
+  law: [
+    'What rights are most important in 2050?',
+    'How is justice maintained?',
+    'What laws protect future generations?'
+  ],
+  environment: [
+    'What does sustainability mean in 2050?',
+    'How are natural resources managed?',
+    'What environmental challenges have we overcome?'
+  ]
+};
 
   const descriptions = {
     politics: 'Democracy, power, participation',
@@ -64,10 +88,12 @@ export default function App() {
       setEditableVision(paragraphs);
       setIsEditing(paragraphs.map(() => false));
 
-      const imagePrompt = `
-A vivid, optimistic concept art of the United Kingdom in 2050.
-Show sustainable cities with green rooftops, thriving communities, diverse people collaborating, clean energy infrastructure (wind & solar), futuristic public transport, and nature integrated with technology.
-Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, utopian.
+const imagePrompt = `
+Please create a concept art style illustration of the following vision of the UK in 2050:
+
+"${vision}"
+
+Make it cinematic, colorful, hopeful, and detailed.
 `.trim();
 
       const imageRes = await fetch('/api/generateImage', {
