@@ -17,21 +17,13 @@ You are a visionary policy thinker. Based on the input below, generate:
 
 1. A short, bold and inspiring title for a 2050 vision (max 10 words)
 2. A concise summary paragraph of the future vision (2–3 sentences)
-3. A full, vivid and inspiring long-form vision broken into 5–7 key sections.
+3. A full, vivid and inspiring long-form vision (5–7 paragraphs)
 
-Each section should have:
-- a short, descriptive heading (max 6 words)
-- a paragraph of text describing that aspect of the future.
-
-Respond in this raw JSON format:
+Return only valid raw JSON:
 {
   "title": "...",
   "summary": "...",
-  "vision": [
-    { "heading": "Heading 1", "text": "Paragraph 1..." },
-    { "heading": "Heading 2", "text": "Paragraph 2..." },
-    ...
-  ]
+  "vision": "..."
 }
 
 User input: ${inputText} ${extraInfo}
@@ -43,20 +35,27 @@ User input: ${inputText} ${extraInfo}
       messages: [{ role: "user", content: finalPrompt }]
     });
 
-    const rawContent = chat.choices[0].message.content || '';
-    const cleanedContent = rawContent.replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(cleanedContent);
+    const raw = chat.choices[0].message.content || "";
+    const cleaned = raw.replace(/```json|```/g, '').trim();
+
+    let parsed;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch (err) {
+      console.error("❌ JSON parse failed:", err.message);
+      console.log("🔎 Raw content:", raw);
+      return res.status(500).json({ error: "Failed to parse vision JSON." });
+    }
 
     return res.status(200).json({
-      title: parsed.title,
-      summary: parsed.summary,
-      vision: parsed.vision.map(v => ({
-        heading: v.heading,
-        text: v.text
-      }))
+      title: parsed.title || '',
+      summary: parsed.summary || '',
+      vision: parsed.vision || ''
     });
+
   } catch (err) {
     console.error("Manifesto error:", err);
     return res.status(500).json({ error: "Failed to generate vision", details: err.message });
   }
 }
+
