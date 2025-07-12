@@ -180,7 +180,11 @@ export default function App() {
           {vision && (
             <div className="card output">
               <h2>🌍 Vision for 2050</h2>
-              <button onClick={() => downloadAsPDF(vision, imageUrl)}>📄 Download as PDF</button>
+           <button
+  onClick={() => downloadAsPDF(visionTitle + '\n\n' + editableVision.join('\n\n'), imageUrl)}
+>
+  📄 Download as PDF
+</button>
               <button
                 onClick={() => setIsEditing(editableVision.map(() => true))}
                 style={{ marginBottom: '16px', backgroundColor: '#FF365E', color: 'white' }}
@@ -225,7 +229,26 @@ export default function App() {
 
               <div className="feedback-buttons">
                 <button onClick={() => {}}>🔁 Refine Vision</button>
-                <button onClick={() => {}}>🎨 Regenerate Image</button>
+<button
+  onClick={async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/generateImage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visionText: editableVision.join('\n') })
+      });
+      const data = await res.json();
+      setImageUrl(data.url || '');
+    } catch (err) {
+      console.error('Image regeneration failed:', err);
+    } finally {
+      setLoading(false);
+    }
+  }}
+>
+  🎨 Regenerate Image
+</button>
               </div>
             </div>
           )}
