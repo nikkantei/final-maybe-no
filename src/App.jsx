@@ -164,7 +164,7 @@ export default function App() {
     <div className="app">
       {showIntro ? (
         <div className="intro-screen">
-          <h1>Ministry for the Future</h1>
+          <h1>Public Consultation by Ministry for the Future</h1>
           <p>Welcome to CivicHorizon — imagine the UK in 2050.</p>
           <button className="start-button" onClick={() => setShowIntro(false)}>
             Start
