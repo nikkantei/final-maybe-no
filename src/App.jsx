@@ -18,36 +18,12 @@ export default function App() {
   const [mode, setMode] = useState(null);
 
   const questions = {
-    politics: [
-      'What values should guide political leadership in 2050?',
-      'What should participation look like in a future democracy?',
-      'What power should citizens hold?'
-    ],
-    economy: [
-      'What does a fair economy look like in 2050?',
-      'How is wealth distributed?',
-      'What role does work play in society?'
-    ],
-    society: [
-      'How do communities support each other in 2050?',
-      'What inequalities have been solved?',
-      'What does social justice look like?'
-    ],
-    technology: [
-      'What technologies are essential in 2050?',
-      'How is technology governed?',
-      'What is the relationship between AI and society?'
-    ],
-    law: [
-      'What rights are most important in 2050?',
-      'How is justice maintained?',
-      'What laws protect future generations?'
-    ],
-    environment: [
-      'What does sustainability mean in 2050?',
-      'How are natural resources managed?',
-      'What environmental challenges have we overcome?'
-    ]
+    politics: [...],
+    economy: [...],
+    society: [...],
+    technology: [...],
+    law: [...],
+    environment: [...]
   };
 
   const descriptions = {
@@ -60,11 +36,12 @@ export default function App() {
   };
 
   const handleThemeToggle = (theme) =>
-    setSelectedThemes((prev) =>
-      prev.includes(theme) ? prev.filter((t) => t !== theme) : [...prev, theme]
+    setSelectedThemes(prev =>
+      prev.includes(theme) ? prev.filter(t => t !== theme) : [...prev, theme]
     );
 
-  const handleAnswer = (q, a) => setAnswers((prev) => ({ ...prev, [q]: a }));
+  const handleAnswer = (q, a) =>
+    setAnswers(prev => ({ ...prev, [q]: a }));
 
   const generate = async () => {
     setLoading(true);
@@ -83,7 +60,7 @@ export default function App() {
       setVision(generatedVision);
       setSummary(data.summary || '');
       setVisionTitle(data.title || '');
-      const paragraphs = generatedVision.split('\n').filter((p) => p.trim());
+      const paragraphs = generatedVision.split('\n').filter(p => p.trim());
       setEditableVision(paragraphs);
       setIsEditing(paragraphs.map(() => false));
 
@@ -109,7 +86,7 @@ Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, ut
     }
   };
 
-  const selectedQs = selectedThemes.flatMap((t) => questions[t] || []);
+  const selectedQs = selectedThemes.flatMap(t => questions[t] || []);
 
   return (
     <div className="app">
@@ -124,6 +101,7 @@ Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, ut
       ) : (
         <>
           <h1>CivicHorizon: Envision the UK in 2050</h1>
+
           <div className="theme-selector">
             <p>Select 1–5 themes to explore:</p>
             {Object.keys(questions).map((theme) => (
@@ -145,7 +123,7 @@ Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, ut
                   <label><strong>{q}</strong></label>
                   <textarea
                     value={answers[q] || ''}
-                    onChange={(e) => handleAnswer(q, e.target.value)}
+                    onChange={e => handleAnswer(q, e.target.value)}
                     placeholder="Your answer…"
                     maxLength={500}
                   />
@@ -163,6 +141,7 @@ Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, ut
             </div>
           )}
 
+          {/* 🔹 Summary FIRST */}
           {summary && (
             <div className="vision-summary-card">
               <div className="summary-title">🌟 Your 2050 Vision Summary</div>
@@ -170,16 +149,20 @@ Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, ut
             </div>
           )}
 
+          {/* 🔹 Vision output */}
           {vision && (
             <div className="card output">
-              <h2>🌍 Vision for 2050</h2>
+              {/* 🔹 Editable Title */}
               <input
                 className="vision-title"
                 type="text"
                 placeholder="Enter a custom title..."
                 value={visionTitle}
-                onChange={(e) => setVisionTitle(e.target.value)}
+                onChange={e => setVisionTitle(e.target.value)}
               />
+
+              <h2>🌍 Vision for 2050</h2>
+
               <button onClick={() => downloadAsPDF(vision, imageUrl)}>📄 Download as PDF</button>
               <button
                 onClick={() => setIsEditing(editableVision.map(() => true))}
@@ -188,13 +171,14 @@ Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, ut
                 ✏️ Edit Vision
               </button>
               <p className="editable-hint">📝 Click any paragraph below to edit it.</p>
+
               <div className="editable-vision">
                 {editableVision.map((para, idx) => (
                   <div key={idx} className="editable-block">
                     {isEditing[idx] ? (
                       <textarea
                         value={para}
-                        onChange={(e) => {
+                        onChange={e => {
                           const updated = [...editableVision];
                           updated[idx] = e.target.value;
                           setEditableVision(updated);
@@ -217,6 +201,7 @@ Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, ut
                   </div>
                 ))}
               </div>
+
               <div className="feedback-buttons">
                 <button onClick={() => {}}>🔁 Refine Vision</button>
                 <button onClick={() => {}}>🎨 Regenerate Image</button>
@@ -224,6 +209,7 @@ Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, ut
             </div>
           )}
 
+          {/* 🔹 Image output */}
           {imageUrl && (
             <div className="card output">
               <h2>🎨 Visual Representation</h2>
