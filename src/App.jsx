@@ -7,16 +7,15 @@ export default function App() {
   const [answers, setAnswers] = useState({});
   const [vision, setVision] = useState('');
   const [summary, setSummary] = useState('');
-  const [summaryTitle, setSummaryTitle] = useState('');
+  const [visionTitle, setVisionTitle] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [loading, setLoading] = useState(false);
-  const [followUpQs, setFollowUpQs] = useState([]);
-  const [followUpAnswers, setFollowUpAnswers] = useState({});
-  const [mode, setMode] = useState(null);
   const [editableVision, setEditableVision] = useState([]);
   const [isEditing, setIsEditing] = useState([]);
   const [showIntro, setShowIntro] = useState(true);
-  const [visionTitle, setVisionTitle] = useState('');
+  const [followUpQs, setFollowUpQs] = useState([]);
+  const [followUpAnswers, setFollowUpAnswers] = useState({});
+  const [mode, setMode] = useState(null);
 
   const questions = {
     politics: [
@@ -61,82 +60,73 @@ export default function App() {
   };
 
   const handleThemeToggle = (theme) =>
-    setSelectedThemes(prev =>
-      prev.includes(theme) ? prev.filter(t => t !== theme) : [...prev, theme]
+    setSelectedThemes((prev) =>
+      prev.includes(theme) ? prev.filter((t) => t !== theme) : [...prev, theme]
     );
 
-  const handleAnswer = (q, a) =>
-    setAnswers(prev => ({ ...prev, [q]: a }));
+  const handleAnswer = (q, a) => setAnswers((prev) => ({ ...prev, [q]: a }));
 
-const generate = async () => {
-  setLoading(true);
-  setVision('');
-  setSummary('');
-  setSummaryTitle('');
-  setImageUrl('');
+  const generate = async () => {
+    setLoading(true);
+    setVision('');
+    setImageUrl('');
+    setSummary('');
 
-  try {
-    const res = await fetch('/api/generateManifesto', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ answers })
-    });
+    try {
+      const res = await fetch('/api/generateManifesto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers })
+      });
+      const data = await res.json();
+      const generatedVision = data.vision || '⚠️ No vision generated.';
+      setVision(generatedVision);
+      setSummary(data.summary || '');
+      setVisionTitle(data.title || '');
+      const paragraphs = generatedVision.split('\n').filter((p) => p.trim());
+      setEditableVision(paragraphs);
+      setIsEditing(paragraphs.map(() => false));
 
-    const data = await res.json();
-    const generatedVision = data.vision || '⚠️ No vision generated.';
-    setVision(generatedVision);
-    setSummary(data.summary || '⚠️ Summary unavailable.');
-    setSummaryTitle(data.title || 'Summary');
-
-    const paragraphs = generatedVision.split('\n').filter(p => p.trim());
-    setEditableVision(paragraphs);
-    setIsEditing(paragraphs.map(() => false));
-
-    const imagePrompt = `
-A vivid, optimistic concept art of the United Kingdom in 2050.
-
+      const imagePrompt = `
+A vivid, optimistic concept art of the United Kingdom in 2050.
 Show sustainable cities with green rooftops, thriving communities, diverse people collaborating, clean energy infrastructure (wind & solar), futuristic public transport, and nature integrated with technology.
-
 Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, utopian.
 `.trim();
 
-    const imageRes = await fetch('/api/generateImage', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: imagePrompt })
-    });
+      const imageRes = await fetch('/api/generateImage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: imagePrompt })
+      });
 
-    const imageData = await imageRes.json();
-    setImageUrl(imageData.url || '');
+      const imageData = await imageRes.json();
+      setImageUrl(imageData.url || '');
+    } catch (err) {
+      console.error(err);
+      setVision('⚠️ Error generating vision.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  } catch (err) {
-    console.error(err);
-    setVision('⚠️ Error generating vision.');
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-  const selectedQs = selectedThemes.flatMap(t => questions[t] || []);
+  const selectedQs = selectedThemes.flatMap((t) => questions[t] || []);
 
   return (
     <div className="app">
-      {showIntro && (
+      {showIntro ? (
         <div className="intro-screen">
           <h1>Ministry for the Future</h1>
           <p>Welcome to CivicHorizon — imagine the UK in 2050.</p>
-          <button className="start-button" onClick={() => setShowIntro(false)}>Start</button>
+          <button className="start-button" onClick={() => setShowIntro(false)}>
+            Start
+          </button>
         </div>
-      )}
-
-      {!showIntro && (
+      ) : (
         <>
           <h1>CivicHorizon: Envision the UK in 2050</h1>
-
           <div className="theme-selector">
             <p>Select 1–5 themes to explore:</p>
-            {Object.keys(questions).map(theme => (
+            {Object.keys(questions).map((theme) => (
               <button
                 key={theme}
                 title={descriptions[theme]}
@@ -155,7 +145,7 @@ Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, ut
                   <label><strong>{q}</strong></label>
                   <textarea
                     value={answers[q] || ''}
-                    onChange={e => handleAnswer(q, e.target.value)}
+                    onChange={(e) => handleAnswer(q, e.target.value)}
                     placeholder="Your answer…"
                     maxLength={500}
                   />
@@ -175,7 +165,7 @@ Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, ut
 
           {summary && (
             <div className="vision-summary-card">
-              <div className="summary-title">🌟 {summaryTitle}</div>
+              <div className="summary-title">🌟 Your 2050 Vision Summary</div>
               <div className="summary-text">{summary}</div>
             </div>
           )}
@@ -183,13 +173,12 @@ Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, ut
           {vision && (
             <div className="card output">
               <h2>🌍 Vision for 2050</h2>
-              <p className="editable-hint">📝 Click any paragraph below to edit it.</p>
               <input
                 className="vision-title"
                 type="text"
                 placeholder="Enter a custom title..."
                 value={visionTitle}
-                onChange={e => setVisionTitle(e.target.value)}
+                onChange={(e) => setVisionTitle(e.target.value)}
               />
               <button onClick={() => downloadAsPDF(vision, imageUrl)}>📄 Download as PDF</button>
               <button
@@ -198,13 +187,14 @@ Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, ut
               >
                 ✏️ Edit Vision
               </button>
+              <p className="editable-hint">📝 Click any paragraph below to edit it.</p>
               <div className="editable-vision">
                 {editableVision.map((para, idx) => (
                   <div key={idx} className="editable-block">
                     {isEditing[idx] ? (
                       <textarea
                         value={para}
-                        onChange={e => {
+                        onChange={(e) => {
                           const updated = [...editableVision];
                           updated[idx] = e.target.value;
                           setEditableVision(updated);
@@ -228,8 +218,8 @@ Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, ut
                 ))}
               </div>
               <div className="feedback-buttons">
-                <button onClick={() => askFollowUps('refineVision')}>🔁 Refine Vision</button>
-                <button onClick={() => askFollowUps('regenerateImage')}>🎨 Regenerate Image</button>
+                <button onClick={() => {}}>🔁 Refine Vision</button>
+                <button onClick={() => {}}>🎨 Regenerate Image</button>
               </div>
             </div>
           )}
@@ -245,4 +235,3 @@ Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, ut
     </div>
   );
 }
-
