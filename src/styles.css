@@ -268,3 +268,46 @@ textarea {
     font-size: 1rem;
   }
 }
+.app-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  text-align: center;
+  color: #FF365E;
+  margin-top: 40px;
+  margin-bottom: 10px;
+}
+
+.theme-instruction {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+/* Make the theme buttons appear in 2 rows, 3 per row */
+.theme-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 700px;
+  margin: 0 auto 40px;
+  justify-items: center;
+}
+
+.theme-selector button {
+  width: 180px;
+  height: 70px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: 2px solid #FF365E;
+  background: white;
+  color: #FF365E;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.theme-selector button.selected {
+  background-color: #FF365E;
+  color: white;
+}
