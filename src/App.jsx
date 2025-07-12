@@ -17,38 +17,38 @@ export default function App() {
   const [followUpAnswers, setFollowUpAnswers] = useState({});
   const [mode, setMode] = useState(null);
 
-const questions = {
-  politics: [
-    'What values should guide political leadership in 2050?',
-    'What should participation look like in a future democracy?',
-    'What power should citizens hold?'
-  ],
-  economy: [
-    'What does a fair economy look like in 2050?',
-    'How is wealth distributed?',
-    'What role does work play in society?'
-  ],
-  society: [
-    'How do communities support each other in 2050?',
-    'What inequalities have been solved?',
-    'What does social justice look like?'
-  ],
-  technology: [
-    'What technologies are essential in 2050?',
-    'How is technology governed?',
-    'What is the relationship between AI and society?'
-  ],
-  law: [
-    'What rights are most important in 2050?',
-    'How is justice maintained?',
-    'What laws protect future generations?'
-  ],
-  environment: [
-    'What does sustainability mean in 2050?',
-    'How are natural resources managed?',
-    'What environmental challenges have we overcome?'
-  ]
-};
+  const questions = {
+    politics: [
+      'What values should guide political leadership in 2050?',
+      'What should participation look like in a future democracy?',
+      'What power should citizens hold?'
+    ],
+    economy: [
+      'What does a fair economy look like in 2050?',
+      'How is wealth distributed?',
+      'What role does work play in society?'
+    ],
+    society: [
+      'How do communities support each other in 2050?',
+      'What inequalities have been solved?',
+      'What does social justice look like?'
+    ],
+    technology: [
+      'What technologies are essential in 2050?',
+      'How is technology governed?',
+      'What is the relationship between AI and society?'
+    ],
+    law: [
+      'What rights are most important in 2050?',
+      'How is justice maintained?',
+      'What laws protect future generations?'
+    ],
+    environment: [
+      'What does sustainability mean in 2050?',
+      'How are natural resources managed?',
+      'What environmental challenges have we overcome?'
+    ]
+  };
 
   const descriptions = {
     politics: 'Democracy, power, participation',
@@ -72,6 +72,7 @@ const questions = {
     setVision('');
     setImageUrl('');
     setSummary('');
+    setVisionTitle('');
 
     try {
       const res = await fetch('/api/generateManifesto', {
@@ -79,27 +80,20 @@ const questions = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ answers })
       });
+
       const data = await res.json();
-      const generatedVision = data.vision || '⚠️ No vision generated.';
-      setVision(generatedVision);
+      setVision(data.vision || '');
       setSummary(data.summary || '');
       setVisionTitle(data.title || '');
-      const paragraphs = generatedVision.split('\n').filter(p => p.trim());
+
+      const paragraphs = (data.vision || '').split('\n').filter(p => p.trim());
       setEditableVision(paragraphs);
       setIsEditing(paragraphs.map(() => false));
-
-const imagePrompt = `
-Please create a concept art style illustration of the following vision of the UK in 2050:
-
-"${vision}"
-
-Make it cinematic, colorful, hopeful, and detailed.
-`.trim();
 
       const imageRes = await fetch('/api/generateImage', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: imagePrompt })
+        body: JSON.stringify({ visionText: data.vision || '' })
       });
 
       const imageData = await imageRes.json();
@@ -167,28 +161,25 @@ Make it cinematic, colorful, hopeful, and detailed.
             </div>
           )}
 
-          {/* 🔹 Summary FIRST */}
+          {/* 🔹 Summary and title */}
           {summary && (
             <div className="vision-summary-card">
-              <div className="summary-title">🌟 Your 2050 Vision Summary</div>
-              <div className="summary-text">{summary}</div>
+              <h2
+                className="summary-title"
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => setVisionTitle(e.target.textContent)}
+              >
+                {visionTitle || '🌟 Your 2050 Vision'}
+              </h2>
+              <p className="summary-text">{summary}</p>
             </div>
           )}
 
           {/* 🔹 Vision output */}
           {vision && (
             <div className="card output">
-              {/* 🔹 Editable Title */}
-              <input
-                className="vision-title"
-                type="text"
-                placeholder="Enter a custom title..."
-                value={visionTitle}
-                onChange={e => setVisionTitle(e.target.value)}
-              />
-
               <h2>🌍 Vision for 2050</h2>
-
               <button onClick={() => downloadAsPDF(vision, imageUrl)}>📄 Download as PDF</button>
               <button
                 onClick={() => setIsEditing(editableVision.map(() => true))}
@@ -218,32 +209,4 @@ Make it cinematic, colorful, hopeful, and detailed.
                         autoFocus
                       />
                     ) : (
-                      <p onClick={() => {
-                        const updated = [...isEditing];
-                        updated[idx] = true;
-                        setIsEditing(updated);
-                      }}>{para}</p>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className="feedback-buttons">
-                <button onClick={() => {}}>🔁 Refine Vision</button>
-                <button onClick={() => {}}>🎨 Regenerate Image</button>
-              </div>
-            </div>
-          )}
-
-          {/* 🔹 Image output */}
-          {imageUrl && (
-            <div className="card output">
-              <h2>🎨 Visual Representation</h2>
-              <img src={imageUrl} alt="Generated vision" />
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  );
-}
+                      <p onCl
