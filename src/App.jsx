@@ -109,20 +109,34 @@ export default function App() {
     }
   };
 
-  const fetchFollowUpQuestions = async () => {
-    try {
-      const res = await fetch('/api/getFollowUpQuestions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers })
-      });
-      const data = await res.json();
-      setFollowUpQs(data.questions || []);
-      setShowFollowUpForm(true);
-    } catch (err) {
-      console.error('Failed to fetch follow-up questions:', err);
+const fetchFollowUpQuestions = async () => {
+  if (!Object.keys(answers).length) {
+    alert('⚠️ No original answers found. Please answer at least one question before refining.');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/getFollowUpQuestions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers })
+    });
+
+    if (!res.ok) throw new Error(`Server returned status ${res.status}`);
+
+    const data = await res.json();
+    if (!data.questions || !Array.isArray(data.questions)) {
+      throw new Error('Invalid response format from follow-up API');
     }
-  };
+
+    setFollowUpQs(data.questions);
+    setShowFollowUpForm(true);
+  } catch (err) {
+    console.error('Failed to fetch follow-up questions:', err);
+    alert('⚠️ Could not load follow-up questions. Please try again later.');
+  }
+};
+
 
   const proceedWithFollowUps = async () => {
     setLoading(true);
