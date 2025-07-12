@@ -11,6 +11,7 @@ export default function App() {
   const [imageUrl, setImageUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [editableVision, setEditableVision] = useState([]);
+  const [editableHeadings, setEditableHeadings] = useState([]);
   const [isEditing, setIsEditing] = useState([]);
   const [showIntro, setShowIntro] = useState(true);
   const [followUpQs, setFollowUpQs] = useState([]);
@@ -48,6 +49,25 @@ export default function App() {
 
   const selectedQs = selectedThemes.flatMap(t => questions[t] || []);
 
+  const parseVisionWithHeadings = (visionText) => {
+    const parts = visionText.split(/(?=^#+\s)/gm).filter(Boolean);
+    const headings = [];
+    const paragraphs = [];
+
+    parts.forEach(block => {
+      const [firstLine, ...rest] = block.trim().split('\n');
+      if (firstLine.startsWith('#')) {
+        headings.push(firstLine.replace(/^#+\s*/, ''));
+        paragraphs.push(rest.join(' ').trim());
+      } else {
+        headings.push('');
+        paragraphs.push(block.trim());
+      }
+    });
+
+    return { headings, paragraphs };
+  };
+
   const generate = async () => {
     setLoading(true);
     setVision('');
@@ -68,8 +88,9 @@ export default function App() {
       setSummary(data.summary || '');
       setVisionTitle(data.title || '');
 
-      const paragraphs = (data.vision || '').split('\n').filter(p => p.trim());
+      const { headings, paragraphs } = parseVisionWithHeadings(data.vision || '');
       setEditableVision(paragraphs);
+      setEditableHeadings(headings);
       setIsEditing(paragraphs.map(() => false));
 
       const imageRes = await fetch('/api/generateImage', {
@@ -119,8 +140,9 @@ export default function App() {
         setVision(data.vision || '');
         setSummary(data.summary || '');
         setVisionTitle(data.title || '');
-        const paragraphs = (data.vision || '').split('\n').filter(p => p.trim());
+        const { headings, paragraphs } = parseVisionWithHeadings(data.vision || '');
         setEditableVision(paragraphs);
+        setEditableHeadings(headings);
         setIsEditing(paragraphs.map(() => false));
       } else if (nextAction === 'image') {
         const res = await fetch('/api/generateImage', {
@@ -240,6 +262,7 @@ export default function App() {
               <div className="editable-vision">
                 {editableVision.map((para, idx) => (
                   <div key={idx} className="editable-block">
+                    <h3>{editableHeadings[idx]}</h3>
                     {isEditing[idx] ? (
                       <textarea
                         value={para}
@@ -257,14 +280,11 @@ export default function App() {
                         autoFocus
                       />
                     ) : (
-                      <p
-                        data-heading={`Heading ${idx + 1}`}
-                        onClick={() => {
-                          const updated = [...isEditing];
-                          updated[idx] = true;
-                          setIsEditing(updated);
-                        }}
-                      >
+                      <p onClick={() => {
+                        const updated = [...isEditing];
+                        updated[idx] = true;
+                        setIsEditing(updated);
+                      }}>
                         {para}
                       </p>
                     )}
@@ -273,20 +293,10 @@ export default function App() {
               </div>
 
               <div className="feedback-buttons">
-                <button
-                  onClick={() => {
-                    setNextAction('refine');
-                    fetchFollowUpQuestions();
-                  }}
-                >
+                <button onClick={() => { setNextAction('refine'); fetchFollowUpQuestions(); }}>
                   🔁 Refine Vision
                 </button>
-                <button
-                  onClick={() => {
-                    setNextAction('image');
-                    fetchFollowUpQuestions();
-                  }}
-                >
+                <button onClick={() => { setNextAction('image'); fetchFollowUpQuestions(); }}>
                   🎨 Regenerate Image
                 </button>
               </div>
