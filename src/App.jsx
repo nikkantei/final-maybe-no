@@ -145,13 +145,18 @@ export default function App() {
         setEditableHeadings(headings);
         setIsEditing(paragraphs.map(() => false));
       } else if (nextAction === 'image') {
-        const res = await fetch('/api/generateImage', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ visionText: extraInfo || editableVision.join('\n') })
-        });
-        const data = await res.json();
-        setImageUrl(data.url || '');
+const keyParagraph =
+  editableVision.find(p => p.length > 100 && !p.toLowerCase().includes('heading')) ||
+  editableVision[0];
+
+const res = await fetch('/api/generateImage', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ visionText: keyParagraph })
+});
+const data = await res.json();
+setImageUrl(data.url || '');
+
       }
     } catch (err) {
       console.error('Follow-up execution failed:', err);
