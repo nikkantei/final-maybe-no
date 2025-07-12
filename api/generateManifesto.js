@@ -19,7 +19,7 @@ You are a visionary policy thinker. Based on the input below, generate:
 2. A concise summary paragraph of the future vision (2–3 sentences)
 3. A full, vivid and inspiring long-form vision (5–7 paragraphs)
 
-Respond in this JSON format:
+Return only valid raw JSON (no explanation, no formatting):
 {
   "title": "...",
   "summary": "...",
