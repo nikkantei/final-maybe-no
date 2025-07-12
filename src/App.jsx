@@ -191,22 +191,33 @@ export default function App() {
 
               <div className="editable-vision">
                 {editableVision.map((para, idx) => (
-                  <div key={idx} className="editable-block">
-                    {isEditing[idx] ? (
-                      <textarea
-                        value={para}
-                        onChange={e => {
-                          const updated = [...editableVision];
-                          updated[idx] = e.target.value;
-                          setEditableVision(updated);
-                        }}
-                        onBlur={() => {
-                          const updated = [...isEditing];
-                          updated[idx] = false;
-                          setIsEditing(updated);
-                          setVision(editableVision.join('\n'));
-                        }}
-                        autoFocus
-                      />
-                    ) : (
-                      <p onCl
+  <div key={idx} className="editable-block">
+    {isEditing[idx] ? (
+      <textarea
+        value={para}
+        onChange={e => {
+          const updated = [...editableVision];
+          updated[idx] = e.target.value;
+          setEditableVision(updated);
+        }}
+        onBlur={() => {
+          const updated = [...isEditing];
+          updated[idx] = false;
+          setIsEditing(updated);
+          setVision(editableVision.join('\n'));
+        }}
+        autoFocus
+      />
+    ) : (
+      <p
+        onClick={() => {
+          const updated = [...isEditing];
+          updated[idx] = true;
+          setIsEditing(updated);
+        }}
+      >
+        {para}
+      </p>
+    )}
+  </div>
+))}
