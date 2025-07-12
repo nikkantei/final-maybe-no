@@ -10,24 +10,25 @@ export default async function handler(req, res) {
   const { answers, extraInfo = "", mode = "initial" } = req.body;
 
   const inputText = Object.values(answers).join(" ") + " " + extraInfo;
-  const finalPrompt = `
+const finalPrompt = `
 You are a visionary policy thinker. Based on the input below, generate:
 
-1. A bold title for a 2050 vision (max 10 words)
-2. A 2–3 sentence summary
-3. A 5–7 paragraph detailed vision
-4. A short heading for each paragraph (max 8 words, no numbers)
+1. A short, bold and inspiring title for a 2050 vision (max 10 words)
+2. A concise summary paragraph of the future vision (2–3 sentences)
+3. A full, vivid and inspiring long-form vision (5–7 paragraphs). 
+   Each paragraph should start with a meaningful heading (no fake "Heading 1" etc.). 
+   For example: "🌱 Green Cities of Tomorrow", "🤖 Human-Centered AI", etc.
 
-Return only valid raw JSON:
+Return only valid raw JSON (no explanation, no formatting):
 {
   "title": "...",
   "summary": "...",
-  "vision": "...",
-  "headings": ["...", "...", "..."]
+  "vision": "..."
 }
 
-User input: ${inputText}
-  `.trim();
+User input: ${inputText} ${extraInfo}
+`.trim();
+
 
   try {
     const chat = await openai.chat.completions.create({
