@@ -122,19 +122,21 @@ export default function App() {
         <>
           <h1>CivicHorizon: Envision the UK in 2050</h1>
 
-          <div className="theme-selector">
-            <p>Select 1–5 themes to explore:</p>
-            {Object.keys(questions).map((theme) => (
-              <button
-                key={theme}
-                title={descriptions[theme]}
-                onClick={() => handleThemeToggle(theme)}
-                className={selectedThemes.includes(theme) ? 'selected' : ''}
-              >
-                {theme}
-              </button>
-            ))}
-          </div>
+<div className="theme-section">
+  <p className="theme-instruction">Select 1–5 themes to explore:</p>
+  <div className="theme-grid">
+    {Object.keys(questions).map((theme) => (
+      <button
+        key={theme}
+        title={descriptions[theme]}
+        onClick={() => handleThemeToggle(theme)}
+        className={`theme-button ${selectedThemes.includes(theme) ? 'selected' : ''}`}
+      >
+        {theme}
+      </button>
+    ))}
+  </div>
+</div>
 
           {selectedThemes.length > 0 && (
             <div className="qa-section">
