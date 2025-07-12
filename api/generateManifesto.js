@@ -32,8 +32,7 @@ User input: ${inputText} ${extraInfo}
   try {
     const chat = await openai.chat.completions.create({
       model: "gpt-4-1106-preview",
-      messages: [{ role: "user", content: finalPrompt }],
-      response_format: "json"
+      messages: [{ role: "user", content: finalPrompt }]
     });
 
     const parsed = JSON.parse(chat.choices[0].message.content);
@@ -48,4 +47,3 @@ User input: ${inputText} ${extraInfo}
     return res.status(500).json({ error: "Failed to generate vision", details: err.message });
   }
 }
-
