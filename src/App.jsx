@@ -19,36 +19,12 @@ export default function App() {
   const [nextAction, setNextAction] = useState(null);
 
   const questions = {
-    politics: [
-      'What values should guide political leadership in 2050?',
-      'What should participation look like in a future democracy?',
-      'What power should citizens hold?'
-    ],
-    economy: [
-      'What does a fair economy look like in 2050?',
-      'How is wealth distributed?',
-      'What role does work play in society?'
-    ],
-    society: [
-      'How do communities support each other in 2050?',
-      'What inequalities have been solved?',
-      'What does social justice look like?'
-    ],
-    technology: [
-      'What technologies are essential in 2050?',
-      'How is technology governed?',
-      'What is the relationship between AI and society?'
-    ],
-    law: [
-      'What rights are most important in 2050?',
-      'How is justice maintained?',
-      'What laws protect future generations?'
-    ],
-    environment: [
-      'What does sustainability mean in 2050?',
-      'How are natural resources managed?',
-      'What environmental challenges have we overcome?'
-    ]
+    politics: ['What values should guide political leadership in 2050?', 'What should participation look like in a future democracy?', 'What power should citizens hold?'],
+    economy: ['What does a fair economy look like in 2050?', 'How is wealth distributed?', 'What role does work play in society?'],
+    society: ['How do communities support each other in 2050?', 'What inequalities have been solved?', 'What does social justice look like?'],
+    technology: ['What technologies are essential in 2050?', 'How is technology governed?', 'What is the relationship between AI and society?'],
+    law: ['What rights are most important in 2050?', 'How is justice maintained?', 'What laws protect future generations?'],
+    environment: ['What does sustainability mean in 2050?', 'How are natural resources managed?', 'What environmental challenges have we overcome?']
   };
 
   const descriptions = {
@@ -68,6 +44,48 @@ export default function App() {
 
   const handleAnswer = (q, a) => {
     setAnswers(prev => ({ ...prev, [q]: a }));
+  };
+
+  const selectedQs = selectedThemes.flatMap(t => questions[t] || []);
+
+  const generate = async () => {
+    setLoading(true);
+    setVision('');
+    setImageUrl('');
+    setSummary('');
+    setVisionTitle('');
+    setShowFollowUpForm(false);
+
+    try {
+      const res = await fetch('/api/generateManifesto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers })
+      });
+
+      const data = await res.json();
+      setVision(data.vision || '');
+      setSummary(data.summary || '');
+      setVisionTitle(data.title || '');
+
+      const paragraphs = (data.vision || '').split('\n').filter(p => p.trim());
+      setEditableVision(paragraphs);
+      setIsEditing(paragraphs.map(() => false));
+
+      const imageRes = await fetch('/api/generateImage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visionText: data.vision || '' })
+      });
+
+      const imageData = await imageRes.json();
+      setImageUrl(imageData.url || '');
+    } catch (err) {
+      console.error(err);
+      setVision('⚠️ Error generating vision.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fetchFollowUpQuestions = async () => {
@@ -90,8 +108,8 @@ export default function App() {
     setShowFollowUpForm(false);
     const extraInfo = Object.values(followUpAnswers).join(' ');
 
-    if (nextAction === 'refine') {
-      try {
+    try {
+      if (nextAction === 'refine') {
         const res = await fetch('/api/generateManifesto', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -104,13 +122,7 @@ export default function App() {
         const paragraphs = (data.vision || '').split('\n').filter(p => p.trim());
         setEditableVision(paragraphs);
         setIsEditing(paragraphs.map(() => false));
-      } catch (err) {
-        console.error('Refine Vision error:', err);
-      } finally {
-        setLoading(false);
-      }
-    } else if (nextAction === 'image') {
-      try {
+      } else if (nextAction === 'image') {
         const res = await fetch('/api/generateImage', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -118,11 +130,11 @@ export default function App() {
         });
         const data = await res.json();
         setImageUrl(data.url || '');
-      } catch (err) {
-        console.error('Image regeneration failed:', err);
-      } finally {
-        setLoading(false);
       }
+    } catch (err) {
+      console.error('Follow-up execution failed:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -130,7 +142,7 @@ export default function App() {
     <div className="app">
       {showIntro ? (
         <div className="intro-screen">
-          <h1>Public Consultation by Ministry for the Future</h1>
+          <h1>Ministry for the Future</h1>
           <p>Welcome to CivicHorizon — imagine the UK in 2050.</p>
           <button className="start-button" onClick={() => setShowIntro(false)}>
             Start
@@ -138,7 +150,7 @@ export default function App() {
         </div>
       ) : (
         <>
-          <h1><strong>CivicHorizon: Envision the UK in 2050</strong></h1>
+          <h1>CivicHorizon: Envision the UK in 2050</h1>
 
           <div className="theme-section">
             <p className="theme-instruction">Select 1–5 themes to explore:</p>
@@ -158,7 +170,7 @@ export default function App() {
 
           {selectedThemes.length > 0 && (
             <div className="qa-section">
-              {selectedThemes.flatMap(t => questions[t]).map((q, i) => (
+              {selectedQs.map((q, i) => (
                 <div key={i} className="question-block">
                   <label><strong>{q}</strong></label>
                   <textarea
@@ -169,8 +181,8 @@ export default function App() {
                   />
                 </div>
               ))}
-              <button className="generate-button" onClick={fetchFollowUpQuestions} disabled={loading}>
-                {loading ? 'Loading…' : 'Generate Vision'}
+              <button className="generate-button" onClick={generate} disabled={loading}>
+                {loading ? 'Generating…' : 'Generate Vision'}
               </button>
             </div>
           )}
@@ -217,7 +229,14 @@ export default function App() {
               <button onClick={() => downloadAsPDF(visionTitle + '\n\n' + editableVision.join('\n\n'), imageUrl)}>
                 📄 Download as PDF
               </button>
+              <button
+                onClick={() => setIsEditing(editableVision.map(() => true))}
+                style={{ marginBottom: '16px', backgroundColor: '#FF365E', color: 'white' }}
+              >
+                ✏️ Edit Vision
+              </button>
               <p className="editable-hint">📝 Click any paragraph below to edit it.</p>
+
               <div className="editable-vision">
                 {editableVision.map((para, idx) => (
                   <div key={idx} className="editable-block">
