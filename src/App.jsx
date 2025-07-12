@@ -213,7 +213,6 @@ export default function App() {
                         autoFocus
                       />
                     ) : (
-                      <p
 <p
   data-heading={`Heading ${idx + 1}`}
   onClick={() => {
