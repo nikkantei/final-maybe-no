@@ -16,7 +16,7 @@ export function downloadAsPDF(vision, imageUrl) {
   doc.text('Vision for 2050', pageWidth / 2, y, { align: 'center' });
   y += 10;
 
-  // Add vision text with auto line wrapping
+  // Add vision text
   doc.setFontSize(12);
   const lines = doc.splitTextToSize(vision, pageWidth - 30);
   lines.forEach(line => {
@@ -28,19 +28,27 @@ export function downloadAsPDF(vision, imageUrl) {
     y += 7;
   });
 
-  // Add image if available
+  // Load and add image (if available), then save
   if (imageUrl) {
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.src = imageUrl;
+
     img.onload = () => {
       const imgWidth = 160;
       const imgHeight = (img.height / img.width) * imgWidth;
+
       if (y + imgHeight > 280) {
         doc.addPage();
         y = 20;
       }
+
       doc.addImage(img, 'JPEG', (pageWidth - imgWidth) / 2, y, imgWidth, imgHeight);
+      doc.save('vision-2050.pdf');
+    };
+
+    img.onerror = () => {
+      console.warn('Image failed to load — saving without image.');
       doc.save('vision-2050.pdf');
     };
   } else {
