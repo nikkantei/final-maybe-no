@@ -92,10 +92,18 @@ setEditableVision(paragraphs);
 setIsEditing(paragraphs.map(() => false));
 
 // 2️⃣ Generate image using the vision text
+const imagePrompt = `
+A vivid, optimistic concept art of the United Kingdom in 2050.
+
+Show sustainable cities with green rooftops, thriving communities, diverse people collaborating, clean energy infrastructure (wind & solar), futuristic public transport, and nature integrated with technology.
+
+Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, utopian.
+`.trim();
+
 const imageRes = await fetch('/api/generateImage', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ visionText: generatedVision })
+  body: JSON.stringify({ prompt: imagePrompt })
 });
 
 const imageData = await imageRes.json();
