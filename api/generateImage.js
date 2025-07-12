@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Step 1: Ask GPT to create a DALL·E-style prompt from the vision
+    // Step 1: Use GPT to generate a detailed visual prompt from the vision text
     const gptResponse = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [
@@ -30,7 +30,7 @@ export default async function handler(req, res) {
 
 ${visionText}
 
-Include details about people, landscapes, futuristic buildings, social life, nature, and technology. Make the tone hopeful and inspiring. Return only the prompt.`,
+Include people, landscapes, futuristic buildings, community life, nature, and technology. Make the tone hopeful and cinematic. Return only the prompt.`,
         },
       ],
       temperature: 0.8,
@@ -42,25 +42,17 @@ Include details about people, landscapes, futuristic buildings, social life, nat
       return res.status(500).json({ error: "Failed to generate image prompt" });
     }
 
-    // Step 2: Send the prompt to DALL·E 3
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4-1106-preview",
-      messages: [
-        {
-          role: "user",
-          content: [{ type: "text", text: imagePrompt }],
-        },
-      ],
-      tools: [{ type: "image_generation" }],
+    // Step 2: Call DALL·E 3 properly
+    const image = await openai.images.generate({
+      model: "dall-e-3",
+      prompt: imagePrompt,
+      n: 1,
+      size: "1024x1024",
+      quality: "standard",
+      response_format: "url",
     });
 
-    const toolCall = completion.choices?.[0]?.message?.tool_calls?.[0];
-    const imageUrl = toolCall?.function?.arguments?.url;
-
-    if (!imageUrl) {
-      console.error("DALL·E 3 image generation failed", completion);
-      return res.status(500).json({ error: "Image generation failed", details: completion });
-    }
+    const imageUrl = image.data[0].url;
 
     return res.status(200).json({ url: imageUrl });
   } catch (err) {
