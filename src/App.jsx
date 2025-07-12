@@ -6,9 +6,10 @@ export default function App() {
   const [selectedThemes, setSelectedThemes] = useState([]);
   const [answers, setAnswers] = useState({});
   const [vision, setVision] = useState('');
+  const [summary, setSummary] = useState('');
+  const [summaryTitle, setSummaryTitle] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [loading, setLoading] = useState(false);
-
   const [followUpQs, setFollowUpQs] = useState([]);
   const [followUpAnswers, setFollowUpAnswers] = useState({});
   const [mode, setMode] = useState(null);
@@ -16,8 +17,6 @@ export default function App() {
   const [isEditing, setIsEditing] = useState([]);
   const [showIntro, setShowIntro] = useState(true);
   const [visionTitle, setVisionTitle] = useState('');
-  const [summary, setSummary] = useState('');
-  const [summaryTitle, setSummaryTitle] = useState('');
 
   const questions = {
     politics: [
@@ -73,6 +72,8 @@ export default function App() {
     setLoading(true);
     setVision('');
     setImageUrl('');
+    setSummary('');
+    setSummaryTitle('');
 
     try {
       const res = await fetch('/api/generateManifesto', {
@@ -88,94 +89,31 @@ export default function App() {
       setEditableVision(paragraphs);
       setIsEditing(paragraphs.map(() => false));
 
-      const summaryPrompt = `Please summarize the following vision of the UK in 2050 in 2–3 clear sentences and give it a catchy title:\n\n${generatedVision}\n\nRespond in this format:\nTitle: ...\nSummary: ...`;
-
-      const summaryRes = await fetch('/api/generateManifesto', {
+      const summaryRes = await fetch('/api/summarizeVision', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: summaryPrompt })
+        body: JSON.stringify({ vision: generatedVision })
       });
-
       const summaryData = await summaryRes.json();
-      const lines = summaryData.vision?.split('\n') || [];
-      const titleLine = lines.find(l => l.toLowerCase().startsWith('title:'));
-      const summaryLine = lines.find(l => l.toLowerCase().startsWith('summary:'));
+      setSummary(summaryData.summary || '⚠️ Summary unavailable.');
+      setSummaryTitle(summaryData.title || 'Summary');
 
-      setSummaryTitle(titleLine ? titleLine.replace(/^title:\s*/i, '') : '');
-      setSummary(summaryLine ? summaryLine.replace(/^summary:\s*/i, '') : '');
-
-      const imagePrompt = `A vivid, optimistic concept art of the United Kingdom in 2050. Show sustainable cities with green rooftops, thriving communities, diverse people collaborating, clean energy infrastructure (wind & solar), futuristic public transport, and nature integrated with technology. Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, utopian.`;
+      const imagePrompt = `
+      A vivid, optimistic concept art of the United Kingdom in 2050.
+      Show sustainable cities with green rooftops, thriving communities, diverse people collaborating, clean energy infrastructure (wind & solar), futuristic public transport, and nature integrated with technology.
+      Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, utopian.
+      `.trim();
 
       const imageRes = await fetch('/api/generateImage', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: imagePrompt })
       });
-
       const imageData = await imageRes.json();
       setImageUrl(imageData.url || '');
-
     } catch (err) {
       console.error(err);
       setVision('⚠️ Error generating vision.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const askFollowUps = async (target) => {
-    setLoading(true); setMode(target);
-    try {
-      const res = await fetch('/api/getFollowUpQuestions', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers })
-      });
-      const data = await res.json();
-      setFollowUpQs(data.questions || []); setFollowUpAnswers({});
-    } catch (e) { console.error(e); }
-    finally { setLoading(false); }
-  };
-
-  const submitFollowUpAnswers = async () => {
-    setLoading(true);
-    const extra = Object.values(followUpAnswers).join(' ');
-
-    try {
-      if (mode === 'refineVision') {
-        const res = await fetch('/api/generateManifesto', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ answers, extraInfo: extra, mode: 'refine' })
-        });
-
-        const data = await res.json();
-        setVision(data.vision || '⚠️ No refined vision generated.');
-
-        const updatedParagraphs = (data.vision || '')
-          .split('\n')
-          .filter(p => p.trim());
-        setEditableVision(updatedParagraphs);
-        setIsEditing(updatedParagraphs.map(() => false));
-      }
-
-      if (mode === 'regenerateImage') {
-        const prompt = `A vibrant, detailed illustration of life in the UK in 2050. Incorporate these ideas: ${extra}. Themes include people, community, technology, nature, and architecture. Hopeful, realistic, and inspiring.`;
-
-        const res = await fetch('/api/generateImage', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt })
-        });
-
-        const data = await res.json();
-        setImageUrl(data.url || '');
-      }
-
-      setFollowUpQs([]);
-      setFollowUpAnswers({});
-      setMode(null);
-    } catch (e) {
-      console.error(e);
     } finally {
       setLoading(false);
     }
@@ -189,9 +127,7 @@ export default function App() {
         <div className="intro-screen">
           <h1>Ministry for the Future</h1>
           <p>Welcome to CivicHorizon — imagine the UK in 2050.</p>
-          <button className="start-button" onClick={() => setShowIntro(false)}>
-            Start
-          </button>
+          <button className="start-button" onClick={() => setShowIntro(false)}>Start</button>
         </div>
       )}
 
@@ -226,11 +162,7 @@ export default function App() {
                   />
                 </div>
               ))}
-              <button
-                className="generate-button"
-                onClick={generate}
-                disabled={loading}
-              >
+              <button className="generate-button" onClick={generate} disabled={loading}>
                 {loading ? 'Generating…' : 'Generate Vision'}
               </button>
             </div>
@@ -244,7 +176,7 @@ export default function App() {
 
           {summary && (
             <div className="vision-summary-card">
-              <div className="summary-title">{summaryTitle || '🌟 Summary of Your Vision'}</div>
+              <div className="summary-title">🌟 {summaryTitle}</div>
               <div className="summary-text">{summary}</div>
             </div>
           )}
@@ -260,9 +192,7 @@ export default function App() {
                 value={visionTitle}
                 onChange={e => setVisionTitle(e.target.value)}
               />
-              <button onClick={() => downloadAsPDF(vision, imageUrl)}>
-                📄 Download as PDF
-              </button>
+              <button onClick={() => downloadAsPDF(vision, imageUrl)}>📄 Download as PDF</button>
               <button
                 onClick={() => setIsEditing(editableVision.map(() => true))}
                 style={{ marginBottom: '16px', backgroundColor: '#FF365E', color: 'white' }}
@@ -293,21 +223,14 @@ export default function App() {
                         const updated = [...isEditing];
                         updated[idx] = true;
                         setIsEditing(updated);
-                      }}>
-                        {para}
-                      </p>
+                      }}>{para}</p>
                     )}
                   </div>
                 ))}
               </div>
-
               <div className="feedback-buttons">
-                <button onClick={() => askFollowUps('refineVision')}>
-                  🔁 Refine Vision
-                </button>
-                <button onClick={() => askFollowUps('regenerateImage')}>
-                  🎨 Regenerate Image
-                </button>
+                <button onClick={() => askFollowUps('refineVision')}>🔁 Refine Vision</button>
+                <button onClick={() => askFollowUps('regenerateImage')}>🎨 Regenerate Image</button>
               </div>
             </div>
           )}
@@ -318,30 +241,9 @@ export default function App() {
               <img src={imageUrl} alt="Generated vision" />
             </div>
           )}
-
-          {followUpQs.length > 0 && (
-            <div className="card output">
-              <h3>📝 Please answer a few follow-up questions:</h3>
-              {followUpQs.map((q, i) => (
-                <div key={i} className="question-block">
-                  <label>{q}</label>
-                  <textarea
-                    value={followUpAnswers[q] || ''}
-                    onChange={e =>
-                      setFollowUpAnswers(prev => ({
-                        ...prev,
-                        [q]: e.target.value
-                      }))
-                    }
-                    maxLength={500}
-                  />
-                </div>
-              ))}
-              <button onClick={submitFollowUpAnswers}>Continue</button>
-            </div>
-          )}
         </>
       )}
     </div>
   );
 }
+
