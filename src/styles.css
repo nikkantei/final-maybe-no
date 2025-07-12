@@ -212,6 +212,32 @@ textarea {
   padding: 20px;
 }
 
+/* =================== VISION SUMMARY =================== */
+.vision-summary-card {
+  background-color: #fff7f9;
+  border: 2px solid #FF365E;
+  border-radius: 14px;
+  padding: 20px;
+  margin: 30px auto;
+  box-shadow: 0 3px 10px rgba(255, 54, 94, 0.1);
+  max-width: 800px;
+}
+
+.summary-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #FF365E;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.summary-text {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #333;
+  text-align: center;
+}
+
 /* =================== MEDIA =================== */
 @media (max-width: 600px) {
   .app {
@@ -230,14 +256,14 @@ textarea {
   }
 
   .theme-selector {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
 
   .theme-selector button {
     width: 100%;
-    font-size: 1rem;
     margin: 6px 0;
+    font-size: 1rem;
   }
 
   .feedback-buttons button {
@@ -259,7 +285,6 @@ textarea {
   }
 }
 
-/* =================== TITLES & INSTRUCTIONS =================== */
 .app-title {
   font-size: 2.2rem;
   font-weight: 800;
