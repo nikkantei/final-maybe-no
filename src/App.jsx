@@ -214,14 +214,17 @@ export default function App() {
                       />
                     ) : (
                       <p
-                        onClick={() => {
-                          const updated = [...isEditing];
-                          updated[idx] = true;
-                          setIsEditing(updated);
-                        }}
-                      >
-                        {para}
-                      </p>
+<p
+  data-heading={`Heading ${idx + 1}`}
+  onClick={() => {
+    const updated = [...isEditing];
+    updated[idx] = true;
+    setIsEditing(updated);
+  }}
+>
+  {para}
+</p>
+
                     )}
                   </div>
                 ))}
