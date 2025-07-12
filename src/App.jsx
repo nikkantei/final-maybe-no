@@ -281,7 +281,7 @@ setImageUrl(data.url || '');
               <div className="editable-vision">
                 {editableVision.map((para, idx) => (
                   <div key={idx} className="editable-block">
-                 <h3>{para.slice(0, 40) + (para.length > 40 ? '...' : '')}</h3>
+<h3>{editableHeadings[idx]}</h3>
                     {isEditing[idx] ? (
                       <textarea
                         value={para}
