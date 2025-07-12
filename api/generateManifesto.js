@@ -35,7 +35,9 @@ User input: ${inputText} ${extraInfo}
       messages: [{ role: "user", content: finalPrompt }]
     });
 
-    const parsed = JSON.parse(chat.choices[0].message.content);
+const rawContent = chat.choices[0].message.content || '';
+const cleanedContent = rawContent.replace(/```json|```/g, '').trim();
+const parsed = JSON.parse(cleanedContent);
 
     return res.status(200).json({
       title: parsed.title,
