@@ -228,7 +228,37 @@ export default function App() {
               </div>
 
               <div className="feedback-buttons">
-                <button onClick={() => {}}>🔁 Refine Vision</button>
+<button
+  onClick={async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/generateManifesto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          answers,
+          extraInfo: editableVision.join(' '),
+          mode: 'refine'
+        })
+      });
+      const data = await res.json();
+      setVision(data.vision || '');
+      setSummary(data.summary || '');
+      setVisionTitle(data.title || '');
+      const paragraphs = (data.vision || '').split('\n').filter(p => p.trim());
+      setEditableVision(paragraphs);
+      setIsEditing(paragraphs.map(() => false));
+    } catch (err) {
+      console.error('Refine Vision error:', err);
+      setVision('⚠️ Error refining vision.');
+    } finally {
+      setLoading(false);
+    }
+  }}
+>
+  🔁 Refine Vision
+</button>
+
 <button
   onClick={async () => {
     setLoading(true);
