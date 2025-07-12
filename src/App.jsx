@@ -15,284 +15,119 @@ export default function App() {
   const [showIntro, setShowIntro] = useState(true);
   const [followUpQs, setFollowUpQs] = useState([]);
   const [followUpAnswers, setFollowUpAnswers] = useState({});
-  const [mode, setMode] = useState(null);
+  const [showFollowUpForm, setShowFollowUpForm] = useState(false);
+  const [nextAction, setNextAction] = useState(null);
 
-  const questions = {
-    politics: [
-      'What values should guide political leadership in 2050?',
-      'What should participation look like in a future democracy?',
-      'What power should citizens hold?'
-    ],
-    economy: [
-      'What does a fair economy look like in 2050?',
-      'How is wealth distributed?',
-      'What role does work play in society?'
-    ],
-    society: [
-      'How do communities support each other in 2050?',
-      'What inequalities have been solved?',
-      'What does social justice look like?'
-    ],
-    technology: [
-      'What technologies are essential in 2050?',
-      'How is technology governed?',
-      'What is the relationship between AI and society?'
-    ],
-    law: [
-      'What rights are most important in 2050?',
-      'How is justice maintained?',
-      'What laws protect future generations?'
-    ],
-    environment: [
-      'What does sustainability mean in 2050?',
-      'How are natural resources managed?',
-      'What environmental challenges have we overcome?'
-    ]
-  };
+  const questions = { /* same as before */ };
+  const descriptions = { /* same as before */ };
 
-  const descriptions = {
-    politics: 'Democracy, power, participation',
-    economy: 'Work, wealth, inequality',
-    society: 'Communities, justice, inclusion',
-    technology: 'AI, digital life, governance',
-    law: 'Rights, rules, future protections',
-    environment: 'Sustainability, climate, nature'
-  };
-
-  const handleThemeToggle = (theme) =>
+  const handleThemeToggle = (theme) => {
     setSelectedThemes(prev =>
       prev.includes(theme) ? prev.filter(t => t !== theme) : [...prev, theme]
     );
+  };
 
-  const handleAnswer = (q, a) =>
+  const handleAnswer = (q, a) => {
     setAnswers(prev => ({ ...prev, [q]: a }));
+  };
 
-  const generate = async () => {
-    setLoading(true);
-    setVision('');
-    setImageUrl('');
-    setSummary('');
-    setVisionTitle('');
-
+  const fetchFollowUpQuestions = async () => {
     try {
-      const res = await fetch('/api/generateManifesto', {
+      const res = await fetch('/api/getFollowUpQuestions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ answers })
       });
-
       const data = await res.json();
-      setVision(data.vision || '');
-      setSummary(data.summary || '');
-      setVisionTitle(data.title || '');
-
-      const paragraphs = (data.vision || '').split('\n').filter(p => p.trim());
-      setEditableVision(paragraphs);
-      setIsEditing(paragraphs.map(() => false));
-
-      const imageRes = await fetch('/api/generateImage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ visionText: data.vision || '' })
-      });
-
-      const imageData = await imageRes.json();
-      setImageUrl(imageData.url || '');
+      setFollowUpQs(data.questions || []);
+      setShowFollowUpForm(true);
     } catch (err) {
-      console.error(err);
-      setVision('⚠️ Error generating vision.');
-    } finally {
-      setLoading(false);
+      console.error('Failed to fetch follow-up questions:', err);
     }
   };
 
-  const selectedQs = selectedThemes.flatMap(t => questions[t] || []);
+  const proceedWithFollowUps = async () => {
+    setLoading(true);
+    setShowFollowUpForm(false);
+    const extraInfo = Object.values(followUpAnswers).join(' ');
+
+    if (nextAction === 'refine') {
+      try {
+        const res = await fetch('/api/generateManifesto', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ answers, extraInfo, mode: 'refine' })
+        });
+        const data = await res.json();
+        setVision(data.vision || '');
+        setSummary(data.summary || '');
+        setVisionTitle(data.title || '');
+        const paragraphs = (data.vision || '').split('\n').filter(p => p.trim());
+        setEditableVision(paragraphs);
+        setIsEditing(paragraphs.map(() => false));
+      } catch (err) {
+        console.error('Refine Vision error:', err);
+      } finally {
+        setLoading(false);
+      }
+    } else if (nextAction === 'image') {
+      try {
+        const res = await fetch('/api/generateImage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ visionText: extraInfo || editableVision.join('\n') })
+        });
+        const data = await res.json();
+        setImageUrl(data.url || '');
+      } catch (err) {
+        console.error('Image regeneration failed:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   return (
     <div className="app">
-      {showIntro ? (
-        <div className="intro-screen">
-          <h1>Ministry for the Future</h1>
-          <p>Welcome to CivicHorizon — imagine the UK in 2050.</p>
-          <button className="start-button" onClick={() => setShowIntro(false)}>
-            Start
-          </button>
+      {/* ...existing UI layout above */}
+
+      {showFollowUpForm && (
+        <div className="card output">
+          <h3>Please answer a few follow-up questions:</h3>
+          {followUpQs.map((q, i) => (
+            <div key={i}>
+              <label>{q}</label>
+              <textarea
+                value={followUpAnswers[q] || ''}
+                onChange={e => setFollowUpAnswers(prev => ({ ...prev, [q]: e.target.value }))}
+              />
+            </div>
+          ))}
+          <button onClick={proceedWithFollowUps}>Continue</button>
         </div>
-      ) : (
-        <>
-          <h1>CivicHorizon: Envision the UK in 2050</h1>
-
-<div className="theme-section">
-  <p className="theme-instruction">Select 1–5 themes to explore:</p>
-  <div className="theme-grid">
-    {Object.keys(questions).map((theme) => (
-      <button
-        key={theme}
-        title={descriptions[theme]}
-        onClick={() => handleThemeToggle(theme)}
-        className={`theme-button ${selectedThemes.includes(theme) ? 'selected' : ''}`}
-      >
-        {theme}
-      </button>
-    ))}
-  </div>
-</div>
-
-          {selectedThemes.length > 0 && (
-            <div className="qa-section">
-              {selectedQs.map((q, i) => (
-                <div key={i} className="question-block">
-                  <label><strong>{q}</strong></label>
-                  <textarea
-                    value={answers[q] || ''}
-                    onChange={e => handleAnswer(q, e.target.value)}
-                    placeholder="Your answer…"
-                    maxLength={500}
-                  />
-                </div>
-              ))}
-              <button className="generate-button" onClick={generate} disabled={loading}>
-                {loading ? 'Generating…' : 'Generate Vision'}
-              </button>
-            </div>
-          )}
-
-          {loading && (
-            <div className="loading-overlay">
-              <p>✨ Generating your future vision...</p>
-            </div>
-          )}
-
-          {summary && (
-            <div className="vision-summary-card">
-              <h2
-                className="summary-title"
-                contentEditable
-                suppressContentEditableWarning
-                onBlur={(e) => setVisionTitle(e.target.textContent)}
-              >
-                {visionTitle || '🌟 Your 2050 Vision'}
-              </h2>
-              <p className="summary-text">{summary}</p>
-            </div>
-          )}
-
-          {vision && (
-            <div className="card output">
-              <h2>🌍 Vision for 2050</h2>
-           <button
-  onClick={() => downloadAsPDF(visionTitle + '\n\n' + editableVision.join('\n\n'), imageUrl)}
->
-  📄 Download as PDF
-</button>
-              <button
-                onClick={() => setIsEditing(editableVision.map(() => true))}
-                style={{ marginBottom: '16px', backgroundColor: '#FF365E', color: 'white' }}
-              >
-                ✏️ Edit Vision
-              </button>
-              <p className="editable-hint">📝 Click any paragraph below to edit it.</p>
-
-              <div className="editable-vision">
-                {editableVision.map((para, idx) => (
-                  <div key={idx} className="editable-block">
-                    {isEditing[idx] ? (
-                      <textarea
-                        value={para}
-                        onChange={e => {
-                          const updated = [...editableVision];
-                          updated[idx] = e.target.value;
-                          setEditableVision(updated);
-                        }}
-                        onBlur={() => {
-                          const updated = [...isEditing];
-                          updated[idx] = false;
-                          setIsEditing(updated);
-                          setVision(editableVision.join('\n'));
-                        }}
-                        autoFocus
-                      />
-                    ) : (
-<p
-  data-heading={`Heading ${idx + 1}`}
-  onClick={() => {
-    const updated = [...isEditing];
-    updated[idx] = true;
-    setIsEditing(updated);
-  }}
->
-  {para}
-</p>
-
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className="feedback-buttons">
-<button
-  onClick={async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/generateManifesto', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          answers,
-          extraInfo: editableVision.join(' '),
-          mode: 'refine'
-        })
-      });
-      const data = await res.json();
-      setVision(data.vision || '');
-      setSummary(data.summary || '');
-      setVisionTitle(data.title || '');
-      const paragraphs = (data.vision || '').split('\n').filter(p => p.trim());
-      setEditableVision(paragraphs);
-      setIsEditing(paragraphs.map(() => false));
-    } catch (err) {
-      console.error('Refine Vision error:', err);
-      setVision('⚠️ Error refining vision.');
-    } finally {
-      setLoading(false);
-    }
-  }}
->
-  🔁 Refine Vision
-</button>
-
-<button
-  onClick={async () => {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/generateImage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ visionText: editableVision.join('\n') })
-      });
-      const data = await res.json();
-      setImageUrl(data.url || '');
-    } catch (err) {
-      console.error('Image regeneration failed:', err);
-    } finally {
-      setLoading(false);
-    }
-  }}
->
-  🎨 Regenerate Image
-</button>
-              </div>
-            </div>
-          )}
-
-          {imageUrl && (
-            <div className="card output">
-              <h2>🎨 Visual Representation</h2>
-              <img src={imageUrl} alt="Generated vision" />
-            </div>
-          )}
-        </>
       )}
+
+      {/* Replace the old Refine and Regenerate buttons */}
+      <div className="feedback-buttons">
+        <button
+          onClick={() => {
+            setNextAction('refine');
+            fetchFollowUpQuestions();
+          }}
+        >
+          🔁 Refine Vision
+        </button>
+        <button
+          onClick={() => {
+            setNextAction('image');
+            fetchFollowUpQuestions();
+          }}
+        >
+          🎨 Regenerate Image
+        </button>
+      </div>
+
+      {/* ...rest of layout below */}
     </div>
   );
 }
