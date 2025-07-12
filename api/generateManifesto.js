@@ -15,9 +15,9 @@ You are a visionary policy thinker. Based on the input below, generate:
 
 1. A short, bold and inspiring title for a 2050 vision (max 10 words)
 2. A concise summary paragraph of the future vision (2–3 sentences)
-3. A full, vivid and inspiring long-form vision (5–7 paragraphs). 
-   Each paragraph should start with a meaningful heading (no fake "Heading 1" etc.). 
-   For example: "🌱 Green Cities of Tomorrow", "🤖 Human-Centered AI", etc.
+3. A full, vivid and inspiring long-form vision (5–7 paragraphs), formatted clearly using Markdown-style headings (e.g. ## A Greener Tomorrow)
+
+Each paragraph of the long-form vision should begin with a meaningful heading that describes the theme of that paragraph.
 
 Return only valid raw JSON (no explanation, no formatting):
 {
