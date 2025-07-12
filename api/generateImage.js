@@ -11,36 +11,25 @@ export default async function handler(req, res) {
 
   const { prompt } = req.body;
 
-  if (!prompt) {
-    return res.status(400).json({ error: 'Missing prompt' });
+  if (!prompt || prompt.length > 1000) {
+    return res.status(400).json({ error: 'Missing or invalid prompt' });
   }
 
   try {
-    const imagePrompt = `
-    A vivid, optimistic concept art of the United Kingdom in 2050.
-
-    Show sustainable cities with green rooftops, thriving communities, diverse people collaborating, clean energy infrastructure (like wind and solar), futuristic public transport, and natural landscapes integrated with technology.
-
-    Use vibrant colors, soft lighting, and cinematic detail. The scene should be peaceful, inspiring, and full of life — like a utopian future made real.
-    `.trim();
-
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4-1106-preview",
-      messages: [
-        {
-          role: "user",
-          content: [{ type: "text", text: imagePrompt }],
-        },
-      ],
-      tools: [{ type: "image_generation" }],
+    const response = await openai.images.generate({
+      model: "dall-e-3",
+      prompt,
+      n: 1,
+      size: "1024x1024",
+      quality: "standard",
+      response_format: "url",
     });
 
-    const toolCall = completion.choices?.[0]?.message?.tool_calls?.[0];
-    const imageUrl = toolCall?.function?.arguments?.url;
+    const imageUrl = response.data[0]?.url;
 
     if (!imageUrl) {
-      console.error("DALL·E 3 image generation failed", completion);
-      return res.status(500).json({ error: "Image generation failed", details: completion });
+      console.error("Image generation failed:", response);
+      return res.status(500).json({ error: "Image generation failed", details: response });
     }
 
     return res.status(200).json({ url: imageUrl });
