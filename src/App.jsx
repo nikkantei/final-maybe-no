@@ -68,56 +68,55 @@ export default function App() {
   const handleAnswer = (q, a) =>
     setAnswers(prev => ({ ...prev, [q]: a }));
 
-  const generate = async () => {
-    setLoading(true);
-    setVision('');
-    setImageUrl('');
-    setSummary('');
-    setSummaryTitle('');
+const generate = async () => {
+  setLoading(true);
+  setVision('');
+  setSummary('');
+  setSummaryTitle('');
+  setImageUrl('');
 
-    try {
-      const res = await fetch('/api/generateManifesto', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers })
-      });
+  try {
+    const res = await fetch('/api/generateManifesto', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers })
+    });
 
-      const data = await res.json();
-      const generatedVision = data.vision || '⚠️ No vision generated.';
-      setVision(generatedVision);
-      const paragraphs = generatedVision.split('\n').filter(p => p.trim());
-      setEditableVision(paragraphs);
-      setIsEditing(paragraphs.map(() => false));
+    const data = await res.json();
+    const generatedVision = data.vision || '⚠️ No vision generated.';
+    setVision(generatedVision);
+    setSummary(data.summary || '⚠️ Summary unavailable.');
+    setSummaryTitle(data.title || 'Summary');
 
-      const summaryRes = await fetch('/api/summarizeVision', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ vision: generatedVision })
-      });
-      const summaryData = await summaryRes.json();
-      setSummary(summaryData.summary || '⚠️ Summary unavailable.');
-      setSummaryTitle(summaryData.title || 'Summary');
+    const paragraphs = generatedVision.split('\n').filter(p => p.trim());
+    setEditableVision(paragraphs);
+    setIsEditing(paragraphs.map(() => false));
 
-      const imagePrompt = `
-      A vivid, optimistic concept art of the United Kingdom in 2050.
-      Show sustainable cities with green rooftops, thriving communities, diverse people collaborating, clean energy infrastructure (wind & solar), futuristic public transport, and nature integrated with technology.
-      Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, utopian.
-      `.trim();
+    const imagePrompt = `
+A vivid, optimistic concept art of the United Kingdom in 2050.
 
-      const imageRes = await fetch('/api/generateImage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: imagePrompt })
-      });
-      const imageData = await imageRes.json();
-      setImageUrl(imageData.url || '');
-    } catch (err) {
-      console.error(err);
-      setVision('⚠️ Error generating vision.');
-    } finally {
-      setLoading(false);
-    }
-  };
+Show sustainable cities with green rooftops, thriving communities, diverse people collaborating, clean energy infrastructure (wind & solar), futuristic public transport, and nature integrated with technology.
+
+Use vibrant colors, soft lighting, and cinematic detail. Peaceful, inspiring, utopian.
+`.trim();
+
+    const imageRes = await fetch('/api/generateImage', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: imagePrompt })
+    });
+
+    const imageData = await imageRes.json();
+    setImageUrl(imageData.url || '');
+
+  } catch (err) {
+    console.error(err);
+    setVision('⚠️ Error generating vision.');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const selectedQs = selectedThemes.flatMap(t => questions[t] || []);
 
