@@ -273,9 +273,11 @@ setImageCaption(data.caption || '');
           {vision && (
             <div className="card output">
               <h2>🌍 Vision for 2050</h2>
-<button onClick={() => downloadAsPDF(visionTitle, editableHeadings, editableVision, imageUrl)}>
-                📄 Download as PDF
-              </button>
+<button onClick={async () => {
+  await downloadAsPDF(visionTitle, editableHeadings, editableVision, imageUrl);
+}}>
+  📄 Download as PDF
+</button>     
 <div className="email-section" style={{ marginTop: '16px' }}>
   <input
     type="email"
