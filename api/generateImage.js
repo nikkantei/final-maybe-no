@@ -34,7 +34,8 @@ ${focus ? `Focus especially on: ${focus}` : ''}
       size: '1024x1024'
     });
 
-    res.status(200).json({ url: image.data[0].url });
+res.status(200).json({ url: image.data[0].url, caption: prompt.trim() });
+
   } catch (err) {
     console.error('Image generation failed:', err);
     res.status(500).json({ error: 'Failed to generate image', details: err.message });
