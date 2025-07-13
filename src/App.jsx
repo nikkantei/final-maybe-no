@@ -376,13 +376,14 @@ setImageCaption(data.caption || '');
             </div>
           )}
 
-        {imageUrl && (
+  {imageUrl && (
   <div className="card output">
     <h2>🎨 Visual Representation</h2>
     <img src={imageUrl} alt="Generated vision" />
-    <p className="image-caption">🔍 Visualizing a typical scene from your 2050 vision</p>
+    {imageCaption && <p className="image-caption">{imageCaption}</p>}
   </div>
 )}
+
 
         </>
       )}
