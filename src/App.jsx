@@ -371,12 +371,14 @@ setImageUrl(data.url || '');
             </div>
           )}
 
-          {imageUrl && (
-            <div className="card output">
-              <h2>🎨 Visual Representation</h2>
-              <img src={imageUrl} alt="Generated vision" />
-            </div>
-          )}
+        {imageUrl && (
+  <div className="card output">
+    <h2>🎨 Visual Representation</h2>
+    <img src={imageUrl} alt="Generated vision" />
+    <p className="image-caption">🔍 Visualizing a typical scene from your 2050 vision</p>
+  </div>
+)}
+
         </>
       )}
     </div>
