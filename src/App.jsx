@@ -19,6 +19,8 @@ export default function App() {
   const [followUpAnswers, setFollowUpAnswers] = useState({});
   const [showFollowUpForm, setShowFollowUpForm] = useState(false);
   const [nextAction, setNextAction] = useState(null);
+  const [imageCaption, setImageCaption] = useState('');
+
 
   const questions = {
     politics: ['What values should guide political leadership in 2050?', 'What should participation look like in a future democracy?', 'What power should citizens hold?'],
@@ -102,6 +104,7 @@ export default function App() {
 
       const imageData = await imageRes.json();
       setImageUrl(imageData.url || '');
+      setImageCaption(imageData.caption || ''); 
     } catch (err) {
       console.error(err);
       setVision('⚠️ Error generating vision.');
@@ -171,6 +174,8 @@ const res = await fetch('/api/generateImage', {
 });
 const data = await res.json();
 setImageUrl(data.url || '');
+setImageCaption(data.caption || '');
+
 
       }
     } catch (err) {
