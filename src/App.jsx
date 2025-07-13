@@ -267,7 +267,7 @@ setImageUrl(data.url || '');
           {vision && (
             <div className="card output">
               <h2>🌍 Vision for 2050</h2>
-              <button onClick={() => downloadAsPDF(visionTitle + '\n\n' + editableVision.join('\n\n'), imageUrl)}>
+<button onClick={() => downloadAsPDF(visionTitle, editableHeadings, editableVision, imageUrl)}>
                 📄 Download as PDF
               </button>
               <button
