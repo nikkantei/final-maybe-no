@@ -223,4 +223,11 @@ textarea {
   font-style: italic;
   color: #666;
 }
+.image-caption {
+  margin-top: 12px;
+  font-size: 1em;
+  color: #555;
+  text-align: center;
+  font-style: italic;
+}
 
