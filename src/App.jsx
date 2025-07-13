@@ -270,6 +270,54 @@ setImageUrl(data.url || '');
 <button onClick={() => downloadAsPDF(visionTitle, editableHeadings, editableVision, imageUrl)}>
                 📄 Download as PDF
               </button>
+<div className="email-section" style={{ marginTop: '16px' }}>
+  <input
+    type="email"
+    placeholder="Your email address"
+    value={email}
+    onChange={e => setEmail(e.target.value)}
+    style={{
+      padding: '8px',
+      width: '60%',
+      marginRight: '8px',
+      border: '1px solid #ccc',
+      borderRadius: '4px'
+    }}
+  />
+  <button
+    onClick={async () => {
+      try {
+        await fetch('/api/sendEmail', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to: email,
+            subject: 'Your Vision for 2050',
+            visionTitle,
+            summary,
+            headings: editableHeadings,
+            paragraphs: editableVision,
+            imageUrl
+          })
+        });
+        alert('✅ Email sent successfully!');
+      } catch (err) {
+        console.error(err);
+        alert('❌ Failed to send email.');
+      }
+    }}
+    style={{
+      padding: '8px 12px',
+      backgroundColor: '#FF365E',
+      color: 'white',
+      border: 'none',
+      borderRadius: '4px'
+    }}
+  >
+    📧 Send to Email
+  </button>
+</div>
+
               <button
                 onClick={() => setIsEditing(editableVision.map(() => true))}
                 style={{ marginBottom: '16px', backgroundColor: '#FF365E', color: 'white' }}
