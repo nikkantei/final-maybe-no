@@ -9,6 +9,7 @@ export default function App() {
   const [summary, setSummary] = useState('');
   const [visionTitle, setVisionTitle] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [editableVision, setEditableVision] = useState([]);
   const [editableHeadings, setEditableHeadings] = useState([]);
