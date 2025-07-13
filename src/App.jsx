@@ -192,7 +192,7 @@ setImageUrl(data.url || '');
         </div>
       ) : (
         <>
-          <h1>CivicHorizon: Envision the UK in 2050</h1>
+          <h1 className="page-title">CivicHorizon: Envision the UK in 2050</h1>
 
           <div className="theme-section">
             <p className="theme-instruction">Select 1–5 themes to explore:</p>
