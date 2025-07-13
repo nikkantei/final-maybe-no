@@ -211,3 +211,10 @@ textarea {
   border-radius: 12px;
   margin-top: 20px;
 }
+.page-title {
+  text-align: center;
+  font-size: 2em;
+  font-weight: bold;
+  margin-top: 40px;
+}
+
