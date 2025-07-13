@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf';
 
-export function downloadAsPDF(vision, imageUrl) {
+export function downloadAsPDF(headings = [], paragraphs = [], imageUrl = '') {
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
@@ -16,19 +16,34 @@ export function downloadAsPDF(vision, imageUrl) {
   doc.text('Vision for 2050', pageWidth / 2, y, { align: 'center' });
   y += 10;
 
-  // Add vision text
+  // Add vision with headings
   doc.setFontSize(12);
-  const lines = doc.splitTextToSize(vision, pageWidth - 30);
-  lines.forEach(line => {
-    if (y > 270) {
-      doc.addPage();
-      y = 20;
+  for (let i = 0; i < paragraphs.length; i++) {
+    if (headings[i]) {
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.setFont(undefined, 'bold');
+      doc.text(headings[i], 15, y);
+      y += 7;
     }
-    doc.text(line, 15, y);
-    y += 7;
-  });
 
-  // Load and add image (if available), then save
+    const lines = doc.splitTextToSize(paragraphs[i], pageWidth - 30);
+    doc.setFont(undefined, 'normal');
+    for (let line of lines) {
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(line, 15, y);
+      y += 7;
+    }
+
+    y += 5;
+  }
+
+  // Add image if available
   if (imageUrl) {
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -37,18 +52,16 @@ export function downloadAsPDF(vision, imageUrl) {
     img.onload = () => {
       const imgWidth = 160;
       const imgHeight = (img.height / img.width) * imgWidth;
-
       if (y + imgHeight > 280) {
         doc.addPage();
         y = 20;
       }
-
       doc.addImage(img, 'JPEG', (pageWidth - imgWidth) / 2, y, imgWidth, imgHeight);
       doc.save('vision-2050.pdf');
     };
 
     img.onerror = () => {
-      console.warn('Image failed to load — saving without image.');
+      console.warn('Image failed to load. Saving PDF without image.');
       doc.save('vision-2050.pdf');
     };
   } else {
