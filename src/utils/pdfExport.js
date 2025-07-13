@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf';
 
-export function downloadAsPDF(title, headings, paragraphs, imageUrl) {
+export async function downloadAsPDF(title, headings, paragraphs, imageUrl) {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageW = doc.internal.pageSize.getWidth();
   const left = 15;
@@ -35,34 +35,45 @@ export function downloadAsPDF(title, headings, paragraphs, imageUrl) {
     y += 4;
   });
 
-  // Image handling with async logic
+  // Load image before saving
   if (imageUrl) {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = imageUrl;
+    try {
+      const imgDataUrl = await loadImageAsDataURL(imageUrl);
+      const img = new Image();
+      img.src = imgDataUrl;
 
-    img.onload = () => {
       const maxW = 160;
       const imgW = Math.min(maxW, img.width * 0.2646); // px → mm
       const imgH = (img.height / img.width) * imgW;
 
-      if (y + imgH > maxY) { doc.addPage(); y = 20; }
+      if (y + imgH > maxY) {
+        doc.addPage();
+        y = 20;
+      }
 
       doc.addImage(img, 'JPEG', (pageW - imgW) / 2, y, imgW, imgH);
-      doc.save('vision-2050.pdf');
-    };
-
-    img.onerror = () => {
-      console.warn('⚠️ Image failed to load. Saving without image.');
-      doc.save('vision-2050.pdf');
-    };
-
-    // Fallback: If image never loads in 5 sec
-    setTimeout(() => {
-      console.warn('⏱️ Image load timeout. Saving without image.');
-      doc.save('vision-2050.pdf');
-    }, 5000);
-  } else {
-    doc.save('vision-2050.pdf');
+    } catch (err) {
+      console.warn('⚠️ Image failed to load. Saving without image.', err);
+    }
   }
+
+  doc.save('vision-2050.pdf');
+}
+
+// Helper to load image and convert to base64
+function loadImageAsDataURL(url) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL('image/jpeg'));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
 }
