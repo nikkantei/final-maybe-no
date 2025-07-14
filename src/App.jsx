@@ -236,7 +236,7 @@ setImageCaption(data.caption || '');
 
           {loading && (
             <div className="loading-overlay">
-              <p>✨ Working on your future vision...</p>
+              <p>✨ The Ministry for the Future is drafting a vision for you...</p>
             </div>
           )}
 
