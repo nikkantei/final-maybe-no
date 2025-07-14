@@ -266,7 +266,20 @@ setImageCaption(data.caption || '');
               >
                 {visionTitle || '🌟 Your 2050 Vision'}
               </h2>
-              <p className="summary-text">{summary}</p>
+<textarea
+  className="summary-text"
+  value={summary}
+  onChange={(e) => setSummary(e.target.value)}
+  placeholder="Summary of your vision..."
+  style={{
+    width: '100%',
+    padding: '10px',
+    fontSize: '1em',
+    borderRadius: '8px',
+    border: '1px solid #ccc',
+    marginTop: '10px'
+  }}
+/>
             </div>
           )}
 
