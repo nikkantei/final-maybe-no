@@ -34,7 +34,12 @@ ${focus ? `Focus especially on: ${focus}` : ''}
       size: '1024x1024'
     });
 
-res.status(200).json({ url: image.data[0].url, caption: prompt.trim() });
+    res.status(200).json({
+      url: image.data[0].url,
+      caption: focus
+        ? `Visual focus: ${focus}`
+        : 'A digital interpretation of your 2050 vision.'
+    });
 
   } catch (err) {
     console.error('Image generation failed:', err);
