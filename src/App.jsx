@@ -382,7 +382,12 @@ setImageCaption(data.caption || '');
   <div className="card output">
     <h2>🎨 Visual Representation</h2>
     <img src={imageUrl} alt="Generated vision" />
-    {imageCaption && <p className="image-caption">{imageCaption}</p>}
+{imageCaption && (
+  <p className="image-caption">
+    {imageCaption.length > 100 ? imageCaption.slice(0, 100) + '…' : imageCaption}
+  </p>
+)}
+
   </div>
 )}
 
