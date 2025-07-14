@@ -39,8 +39,15 @@ export async function downloadAsPDF(title, headings, paragraphs, imageUrl) {
   if (imageUrl) {
     try {
       const imgDataUrl = await loadImageAsDataURL(imageUrl);
+
       const img = new Image();
-      img.src = imgDataUrl;
+      img.crossOrigin = 'anonymous';
+      img.src = imageUrl;
+
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
 
       const maxW = 160;
       const imgW = Math.min(maxW, img.width * 0.2646); // px → mm
@@ -51,11 +58,12 @@ export async function downloadAsPDF(title, headings, paragraphs, imageUrl) {
         y = 20;
       }
 
-      doc.addImage(img, 'JPEG', (pageW - imgW) / 2, y, imgW, imgH);
+      doc.addImage(imgDataUrl, 'JPEG', (pageW - imgW) / 2, y, imgW, imgH);
     } catch (err) {
       console.warn('⚠️ Image failed to load. Saving without image.', err);
     }
   }
+
 
   doc.save('vision-2050.pdf');
 }
