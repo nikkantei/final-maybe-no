@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf';
 
-export async function downloadAsPDF(title, headings, paragraphs, imageUrl) {
+export async function downloadAsPDF(title, summary, headings, paragraphs, imageDataUrl) {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageW = doc.internal.pageSize.getWidth();
   const left = 15;
@@ -14,7 +14,25 @@ export async function downloadAsPDF(title, headings, paragraphs, imageUrl) {
   doc.setTextColor(40);
   doc.text(title || 'Vision for 2050', pageW / 2, y, { align: 'center' });
   y += 12;
+if (summary) {
+  doc.setFontSize(14);
+  doc.setFont(undefined, 'bold');
+  doc.text('Summary', left, y);
+  y += 7;
 
+  doc.setFontSize(12);
+  doc.setFont(undefined, 'normal');
+  const summaryLines = doc.splitTextToSize(summary, right - left);
+  summaryLines.forEach(line => {
+    if (y > maxY) { doc.addPage(); y = 20; }
+    doc.text(line, left, y);
+    y += 7;
+  });
+
+  y += 4;
+}
+
+  
   // Body
   doc.setFontSize(13);
   headings.forEach((h, idx) => {
@@ -35,34 +53,27 @@ export async function downloadAsPDF(title, headings, paragraphs, imageUrl) {
     y += 4;
   });
 
-  // Load image before saving
-  if (imageUrl) {
-    try {
-      const imgDataUrl = await loadImageAsDataURL(imageUrl);
+if (imageDataUrl?.startsWith('data:image')) {
+  const img = new Image();
+  img.src = imageDataUrl;
 
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.src = imageUrl;
+  await new Promise((resolve, reject) => {
+    img.onload = resolve;
+    img.onerror = reject;
+  });
 
-      await new Promise((resolve, reject) => {
-        img.onload = resolve;
-        img.onerror = reject;
-      });
+  const maxW = 160;
+  const imgW = Math.min(maxW, img.width * 0.2646);
+  const imgH = (img.height / img.width) * imgW;
 
-      const maxW = 160;
-      const imgW = Math.min(maxW, img.width * 0.2646); // px → mm
-      const imgH = (img.height / img.width) * imgW;
-
-      if (y + imgH > maxY) {
-        doc.addPage();
-        y = 20;
-      }
-
-      doc.addImage(imgDataUrl, 'JPEG', (pageW - imgW) / 2, y, imgW, imgH);
-    } catch (err) {
-      console.warn('⚠️ Image failed to load. Saving without image.', err);
-    }
+  if (y + imgH > maxY) {
+    doc.addPage();
+    y = 20;
   }
+
+  doc.addImage(imageDataUrl, 'JPEG', (pageW - imgW) / 2, y, imgW, imgH);
+}
+
 
 
   doc.save('vision-2050.pdf');
