@@ -14,26 +14,27 @@ export async function downloadAsPDF(title, summary, headings, paragraphs, imageD
   doc.setTextColor(40);
   doc.text(title || 'Vision for 2050', pageW / 2, y, { align: 'center' });
   y += 12;
-if (summary) {
-  doc.setFontSize(14);
-  doc.setFont(undefined, 'bold');
-  doc.text('Summary', left, y);
-  y += 7;
 
-  doc.setFontSize(12);
-  doc.setFont(undefined, 'normal');
-  const summaryLines = doc.splitTextToSize(summary, right - left);
-  summaryLines.forEach(line => {
-    if (y > maxY) { doc.addPage(); y = 20; }
-    doc.text(line, left, y);
+  // Summary
+  if (summary) {
+    doc.setFontSize(14);
+    doc.setFont(undefined, 'bold');
+    doc.text('Summary', left, y);
     y += 7;
-  });
 
-  y += 4;
-}
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'normal');
+    const summaryLines = doc.splitTextToSize(summary, right - left);
+    summaryLines.forEach(line => {
+      if (y > maxY) { doc.addPage(); y = 20; }
+      doc.text(line, left, y);
+      y += 7;
+    });
 
-  
-  // Body
+    y += 4;
+  }
+
+  // Main content
   doc.setFontSize(13);
   headings.forEach((h, idx) => {
     if (y > maxY) { doc.addPage(); y = 20; }
@@ -53,33 +54,22 @@ if (summary) {
     y += 4;
   });
 
-if (imageDataUrl?.startsWith('data:image')) {
-  const img = new Image();
-  img.src = imageDataUrl;
+  // Image (if available) — no loading or size calculation
+  if (imageDataUrl?.startsWith('data:image')) {
+    if (y > maxY - 60) {
+      doc.addPage();
+      y = 20;
+    }
 
-  await new Promise((resolve, reject) => {
-    img.onload = resolve;
-    img.onerror = reject;
-  });
-
-  const maxW = 160;
-  const imgW = Math.min(maxW, img.width * 0.2646);
-  const imgH = (img.height / img.width) * imgW;
-
-  if (y + imgH > maxY) {
-    doc.addPage();
-    y = 20;
+    const imgW = 80;
+    const imgH = 60;
+    doc.addImage(imageDataUrl, 'JPEG', (pageW - imgW) / 2, y, imgW, imgH);
   }
-
-  doc.addImage(imageDataUrl, 'JPEG', (pageW - imgW) / 2, y, imgW, imgH);
-}
-
-
 
   doc.save('vision-2050.pdf');
 }
 
-// Helper to load image and convert to base64
+// Convert remote image URL to data URL
 export function loadImageAsDataURL(url) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -96,4 +86,3 @@ export function loadImageAsDataURL(url) {
     img.src = url;
   });
 }
-
