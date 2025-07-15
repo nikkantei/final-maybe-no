@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { downloadAsPDF } from './utils/pdfExport';
+import { downloadAsPDF, loadImageAsDataURL } from './utils/pdfExport';
 import './styles.css';
 
 export default function App() {
@@ -287,10 +287,17 @@ setImageCaption(data.caption || '');
             <div className="card output">
               <h2>🌍 Vision for 2050</h2>
 <button onClick={async () => {
-  await downloadAsPDF(visionTitle, editableHeadings, editableVision, imageUrl);
+  try {
+    const imageDataUrl = await loadImageAsDataURL(imageUrl); // Convert to base64
+    await downloadAsPDF(visionTitle, summary, editableHeadings, editableVision, imageDataUrl);
+  } catch (err) {
+    console.error('❌ Failed to download PDF:', err);
+    alert('Failed to generate PDF. Please try again.');
+  }
 }}>
   📄 Download as PDF
-</button>     
+</button>
+
 <div className="email-section" style={{ marginTop: '16px' }}>
   <input
     type="email"
