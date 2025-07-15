@@ -80,7 +80,7 @@ if (imageDataUrl?.startsWith('data:image')) {
 }
 
 // Helper to load image and convert to base64
-function loadImageAsDataURL(url) {
+export function loadImageAsDataURL(url) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -96,3 +96,4 @@ function loadImageAsDataURL(url) {
     img.src = url;
   });
 }
+
