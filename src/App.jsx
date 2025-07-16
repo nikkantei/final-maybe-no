@@ -281,10 +281,12 @@ setImageCaption(data.caption || '');
           {vision && (
             <div className="card output">
            <h2>🌍 Vision for 2050</h2>
-
 <button onClick={async () => {
   try {
-    console.log('📸 imageUrl before conversion:', imageUrl); // ← ✅ move inside the handler
+    console.log('📄 Download PDF button clicked');
+    console.log('📸 imageUrl before conversion:', imageUrl);
+
+    
     const imageDataUrl = imageUrl ? await loadImageAsDataURL(imageUrl) : '';
     await downloadAsPDF(
       visionTitle || 'Vision for 2050',
