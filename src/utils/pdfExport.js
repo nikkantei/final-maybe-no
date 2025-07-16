@@ -1,6 +1,13 @@
 import jsPDF from 'jspdf';
 
-export async function downloadAsPDF(title, summary, headings = [], paragraphs = [], imageDataUrl = '', authorName = '') {
+export async function downloadAsPDF(
+  title,
+  summary,
+  headings = [],
+  paragraphs = [],
+  imageDataUrl = '',
+  authorName = ''
+) {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageW = doc.internal.pageSize.getWidth();
   const left = 12;
@@ -33,10 +40,10 @@ export async function downloadAsPDF(title, summary, headings = [], paragraphs = 
     y += 3;
   }
 
-  // Content
+  // Main Content
   doc.setFontSize(11);
-  headings.forEach((h, idx) => {
-    const heading = h || `Section ${idx + 1}`;
+  for (let idx = 0; idx < headings.length; idx++) {
+    const heading = headings[idx] || `Section ${idx + 1}`;
     const paragraph = paragraphs[idx] || '';
 
     doc.setFont(undefined, 'bold');
@@ -52,8 +59,8 @@ export async function downloadAsPDF(title, summary, headings = [], paragraphs = 
     }
 
     y += 4;
-    if (y > maxY - 40) return; // Stop if space for image is tight
-  });
+    if (y > maxY - 40) break; // Stop if space for image is tight
+  }
 
   // Image
   if (imageDataUrl?.startsWith('data:image')) {
@@ -67,11 +74,11 @@ export async function downloadAsPDF(title, summary, headings = [], paragraphs = 
     try {
       doc.addImage(imageDataUrl, 'JPEG', (pageW - imgW) / 2, y, imgW, imgH);
     } catch (err) {
-      console.warn('⚠️ Failed to add image:', err);
+      console.warn('⚠️ Failed to add image to PDF:', err);
     }
   }
 
-  // Author name (if provided)
+  // Author name
   if (authorName) {
     doc.setFontSize(10);
     doc.setTextColor(100);
@@ -81,21 +88,29 @@ export async function downloadAsPDF(title, summary, headings = [], paragraphs = 
   doc.save('vision-2050.pdf');
 }
 
-// Helper: Convert image URL to base64 Data URL
+// ✅ Updated helper with full error logging
 export function loadImageAsDataURL(url) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      resolve(canvas.toDataURL('image/jpeg'));
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const dataUrl = canvas.toDataURL('image/jpeg');
+        resolve(dataUrl);
+      } catch (err) {
+        console.error('❌ Image conversion failed:', err);
+        reject(err);
+      }
     };
-    img.onerror = reject;
+    img.onerror = (e) => {
+      console.error('❌ Image failed to load:', e);
+      reject(e);
+    };
     img.src = url;
   });
 }
-
