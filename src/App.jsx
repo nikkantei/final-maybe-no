@@ -282,7 +282,7 @@ setImageCaption(data.caption || '');
               <h2>🌍 Vision for 2050</h2>
 <button onClick={async () => {
   try {
-await downloadAsPDF(visionTitle);
+await downloadAsPDF(visionTitle, summary, editableHeadings, editableVision);
 
   } catch (err) {
     console.error('❌ Failed to download PDF:', err);
