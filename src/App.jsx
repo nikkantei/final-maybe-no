@@ -282,8 +282,8 @@ setImageCaption(data.caption || '');
               <h2>🌍 Vision for 2050</h2>
 <button onClick={async () => {
   try {
-    const imageDataUrl = await loadImageAsDataURL(imageUrl); // Convert to base64
-    await downloadAsPDF(visionTitle, summary, editableHeadings, editableVision, imageDataUrl);
+await downloadAsPDF(visionTitle);
+
   } catch (err) {
     console.error('❌ Failed to download PDF:', err);
     alert('Failed to generate PDF. Please try again.');
