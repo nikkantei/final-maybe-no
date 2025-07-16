@@ -63,7 +63,12 @@ export async function downloadAsPDF(title, summary, headings, paragraphs, imageD
 
     const imgW = 80;
     const imgH = 60;
-    doc.addImage(imageDataUrl, 'JPEG', (pageW - imgW) / 2, y, imgW, imgH);
+try {
+  doc.addImage(imageDataUrl, 'JPEG', (pageW - imgW) / 2, y, imgW, imgH);
+} catch (err) {
+  console.warn('⚠️ Failed to add image to PDF:', err);
+}
+
   }
 
   doc.save('vision-2050.pdf');
