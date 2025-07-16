@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf';
 
-export async function downloadAsPDF(title, summary, headings = [], paragraphs = [], imageDataUrl = '') {
+export async function downloadAsPDF(title, summary, headings = [], paragraphs = [], imageDataUrl = '', authorName = '') {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageW = doc.internal.pageSize.getWidth();
   const left = 12;
@@ -48,11 +48,11 @@ export async function downloadAsPDF(title, summary, headings = [], paragraphs = 
     for (const line of lines) {
       doc.text(line, left, y);
       y += 5;
-      if (y > maxY - 40) break; // Stop printing early to reserve space for image
+      if (y > maxY - 40) break; // Leave space for image
     }
 
     y += 4;
-    if (y > maxY - 40) return; // Stop if space for image is getting tight
+    if (y > maxY - 40) return; // Stop if space for image is tight
   });
 
   // Image
@@ -69,6 +69,13 @@ export async function downloadAsPDF(title, summary, headings = [], paragraphs = 
     } catch (err) {
       console.warn('⚠️ Failed to add image:', err);
     }
+  }
+
+  // Author name (if provided)
+  if (authorName) {
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Created by: ${authorName}`, pageW - 15, 290, { align: 'right' });
   }
 
   doc.save('vision-2050.pdf');
