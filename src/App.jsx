@@ -20,6 +20,7 @@ export default function App() {
   const [showFollowUpForm, setShowFollowUpForm] = useState(false);
   const [nextAction, setNextAction] = useState(null);
   const [imageCaption, setImageCaption] = useState('');
+  const [authorName, setAuthorName] = useState('');
 
 
   const questions = {
@@ -283,7 +284,7 @@ setImageCaption(data.caption || '');
 <button onClick={async () => {
   try {
     const imageDataUrl = await loadImageAsDataURL(imageUrl); // ✅ Convert image URL to base64
-    await downloadAsPDF(visionTitle, summary, editableHeadings, editableVision, imageDataUrl); // ✅ Pass image to PDF
+    await downloadAsPDF(visionTitle, summary, editableHeadings, editableVision, imageDataUrl, authorName); // ✅ Pass image to PDF
   } catch (err) {
     console.error('❌ Failed to download PDF:', err);
     alert('Failed to generate PDF. Please try again.');
@@ -393,6 +394,25 @@ setImageCaption(data.caption || '');
             </div>
           )}
 
+<div style={{ marginTop: '12px' }}>
+  <label>
+    Your name or initials (optional):&nbsp;
+    <input
+      type="text"
+      value={authorName}
+      onChange={e => setAuthorName(e.target.value)}
+      placeholder="e.g. A.B. or Alex"
+      style={{
+        padding: '6px',
+        borderRadius: '4px',
+        border: '1px solid #ccc',
+        width: '60%'
+      }}
+    />
+  </label>
+</div>
+
+          
   {imageUrl && (
   <div className="card output">
     <h2>🎨 Visual Representation</h2>
