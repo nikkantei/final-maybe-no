@@ -1,14 +1,8 @@
+// ✅ FILE: src/utils/pdfExport.js
 import jsPDF from 'jspdf';
 
-// Export PDF (image removed as requested)
-export async function downloadAsPDF(
-  title,
-  summary,
-  headings = [],
-  paragraphs = [],
-  imageDataUrl = '',
-  authorName = ''
-) {
+// Export PDF (WITHOUT image)
+export async function downloadAsPDF(title, summary, headings = [], paragraphs = [], authorName = '') {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageW = doc.internal.pageSize.getWidth();
   const left = 12;
@@ -56,7 +50,7 @@ export async function downloadAsPDF(
     for (const line of lines) {
       doc.text(line, left, y);
       y += 5;
-      if (y > maxY) break;
+      if (y > maxY) return;
     }
 
     y += 4;
@@ -71,41 +65,4 @@ export async function downloadAsPDF(
   }
 
   doc.save('vision-2050.pdf');
-}
-
-// Helper: Convert image URL to base64 Data URL (used only if needed elsewhere)
-export function loadImageAsDataURL(url) {
-  return new Promise((resolve, reject) => {
-    if (!url) {
-      console.error('❌ No image URL provided to convert');
-      reject(new Error('No image URL'));
-      return;
-    }
-
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-
-    img.onload = () => {
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
-        const dataUrl = canvas.toDataURL('image/jpeg');
-        console.log('✅ Image successfully converted to base64');
-        resolve(dataUrl);
-      } catch (err) {
-        console.error('❌ Image conversion failed:', err);
-        reject(err);
-      }
-    };
-
-    img.onerror = (e) => {
-      console.error('❌ Image failed to load:', e, url);
-      reject(e);
-    };
-
-    img.src = url;
-  });
 }
