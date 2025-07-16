@@ -284,7 +284,12 @@ setImageCaption(data.caption || '');
 <button onClick={async () => {
   try {
     console.log('📄 Download PDF button clicked');
-    console.log('📸 imageUrl before conversion:', imageUrl);
+    console.log('📸 imageUrl before conversion:', imageUrl
+               if (!imageUrl) {
+  console.warn('⚠️ No imageUrl provided!');
+} else if (!imageUrl.startsWith('http')) {
+  console.warn('⚠️ imageUrl is not a valid http(s) URL:', imageUrl);
+});
 
     
     const imageDataUrl = imageUrl ? await loadImageAsDataURL(imageUrl) : '';
