@@ -282,8 +282,8 @@ setImageCaption(data.caption || '');
               <h2>🌍 Vision for 2050</h2>
 <button onClick={async () => {
   try {
-await downloadAsPDF(visionTitle, summary, editableHeadings, editableVision);
-
+    const imageDataUrl = await loadImageAsDataURL(imageUrl); // ✅ Convert image URL to base64
+    await downloadAsPDF(visionTitle, summary, editableHeadings, editableVision, imageDataUrl); // ✅ Pass image to PDF
   } catch (err) {
     console.error('❌ Failed to download PDF:', err);
     alert('Failed to generate PDF. Please try again.');
@@ -291,6 +291,7 @@ await downloadAsPDF(visionTitle, summary, editableHeadings, editableVision);
 }}>
   📄 Download as PDF
 </button>
+
 
 <div className="email-section" style={{ marginTop: '16px' }}>
   <input
