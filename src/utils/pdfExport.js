@@ -55,21 +55,23 @@ export async function downloadAsPDF(title, summary, headings, paragraphs, imageD
   });
 
   // Image (if available) — no loading or size calculation
-  if (imageDataUrl?.startsWith('data:image')) {
-    if (y > maxY - 60) {
-      doc.addPage();
-      y = 20;
-    }
+// Image is temporarily disabled to isolate the PDF issue
+// if (imageDataUrl?.startsWith('data:image')) {
+//   if (y > maxY - 60) {
+//     doc.addPage();
+//     y = 20;
+//   }
 
-    const imgW = 80;
-    const imgH = 60;
-try {
-  doc.addImage(imageDataUrl, 'JPEG', (pageW - imgW) / 2, y, imgW, imgH);
-} catch (err) {
-  console.warn('⚠️ Failed to add image to PDF:', err);
-}
+//   const imgW = 80;
+//   const imgH = 60;
 
-  }
+//   try {
+//     doc.addImage(imageDataUrl, 'JPEG', (pageW - imgW) / 2, y, imgW, imgH);
+//   } catch (err) {
+//     console.warn('⚠️ Failed to add image to PDF:', err);
+//   }
+// }
+
 
   doc.save('vision-2050.pdf');
 }
