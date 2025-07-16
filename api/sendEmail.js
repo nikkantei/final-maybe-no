@@ -9,16 +9,24 @@ export default async function handler(req, res) {
 
   const { to, subject, visionTitle, summary, headings, paragraphs, imageUrl } = req.body;
 
-  if (!to || !subject || !headings || !paragraphs) {
-    return res.status(400).json({ error: 'Missing required fields' });
+  if (
+    !to ||
+    !subject ||
+    !visionTitle ||
+    !summary ||
+    !Array.isArray(headings) ||
+    !Array.isArray(paragraphs)
+  ) {
+    console.warn('❌ Missing or invalid fields:', req.body);
+    return res.status(400).json({ error: 'Missing or invalid fields' });
   }
 
   const htmlContent = `
     <h1>${visionTitle}</h1>
     <p><strong>Summary:</strong> ${summary}</p>
     ${headings.map((h, i) => `
-      <h3>${h}</h3>
-      <p>${paragraphs[i]}</p>
+      <h3>${h || `Section ${i + 1}`}</h3>
+      <p>${paragraphs[i] || ''}</p>
     `).join('')}
     ${imageUrl ? `<img src="${imageUrl}" alt="Vision Image" style="max-width:100%;margin-top:20px;">` : ''}
   `;
