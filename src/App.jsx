@@ -281,6 +281,8 @@ setImageCaption(data.caption || '');
           {vision && (
             <div className="card output">
               <h2>🌍 Vision for 2050</h2>
+             console.log('📸 imageUrl before conversion:', imageUrl);
+ 
 <button onClick={async () => {
   try {
     const imageDataUrl = await loadImageAsDataURL(imageUrl); // ✅ Convert image URL to base64
