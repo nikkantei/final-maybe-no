@@ -1,13 +1,7 @@
 import jsPDF from 'jspdf';
 
-export async function downloadAsPDF(
-  title,
-  summary,
-  headings = [],
-  paragraphs = [],
-  imageDataUrl = '',
-  authorName = ''
-) {
+// Export PDF
+export async function downloadAsPDF(title, summary, headings = [], paragraphs = [], imageDataUrl = '', authorName = '') {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageW = doc.internal.pageSize.getWidth();
   const left = 12;
@@ -40,10 +34,10 @@ export async function downloadAsPDF(
     y += 3;
   }
 
-  // Main Content
+  // Content
   doc.setFontSize(11);
-  for (let idx = 0; idx < headings.length; idx++) {
-    const heading = headings[idx] || `Section ${idx + 1}`;
+  headings.forEach((h, idx) => {
+    const heading = h || `Section ${idx + 1}`;
     const paragraph = paragraphs[idx] || '';
 
     doc.setFont(undefined, 'bold');
@@ -59,8 +53,8 @@ export async function downloadAsPDF(
     }
 
     y += 4;
-    if (y > maxY - 40) break; // Stop if space for image is tight
-  }
+    if (y > maxY - 40) return; // Stop if space is tight
+  });
 
   // Image
   if (imageDataUrl?.startsWith('data:image')) {
@@ -73,12 +67,15 @@ export async function downloadAsPDF(
 
     try {
       doc.addImage(imageDataUrl, 'JPEG', (pageW - imgW) / 2, y, imgW, imgH);
+      y += imgH + 4;
     } catch (err) {
-      console.warn('⚠️ Failed to add image to PDF:', err);
+      console.warn('⚠️ Failed to add image:', err);
     }
+  } else {
+    console.warn('⚠️ Skipping image – not a valid base64 data URL:', imageDataUrl?.slice(0, 30));
   }
 
-  // Author name
+  // Author name (if provided)
   if (authorName) {
     doc.setFontSize(10);
     doc.setTextColor(100);
@@ -88,11 +85,18 @@ export async function downloadAsPDF(
   doc.save('vision-2050.pdf');
 }
 
-// ✅ Updated helper with full error logging
+// Helper: Convert image URL to base64 Data URL
 export function loadImageAsDataURL(url) {
   return new Promise((resolve, reject) => {
+    if (!url) {
+      console.error('❌ No image URL provided to convert');
+      reject(new Error('No image URL'));
+      return;
+    }
+
     const img = new Image();
     img.crossOrigin = 'anonymous';
+
     img.onload = () => {
       try {
         const canvas = document.createElement('canvas');
@@ -101,16 +105,19 @@ export function loadImageAsDataURL(url) {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
         const dataUrl = canvas.toDataURL('image/jpeg');
+        console.log('✅ Image successfully converted to base64');
         resolve(dataUrl);
       } catch (err) {
         console.error('❌ Image conversion failed:', err);
         reject(err);
       }
     };
+
     img.onerror = (e) => {
-      console.error('❌ Image failed to load:', e);
+      console.error('❌ Image failed to load:', e, url);
       reject(e);
     };
+
     img.src = url;
   });
 }
