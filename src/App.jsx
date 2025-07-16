@@ -280,13 +280,20 @@ setImageCaption(data.caption || '');
 
           {vision && (
             <div className="card output">
-              <h2>🌍 Vision for 2050</h2>
-             console.log('📸 imageUrl before conversion:', imageUrl);
- 
+           <h2>🌍 Vision for 2050</h2>
+
 <button onClick={async () => {
   try {
-    const imageDataUrl = await loadImageAsDataURL(imageUrl); // ✅ Convert image URL to base64
-    await downloadAsPDF(visionTitle, summary, editableHeadings, editableVision, imageDataUrl, authorName); // ✅ Pass image to PDF
+    console.log('📸 imageUrl before conversion:', imageUrl); // ← ✅ move inside the handler
+    const imageDataUrl = imageUrl ? await loadImageAsDataURL(imageUrl) : '';
+    await downloadAsPDF(
+      visionTitle || 'Vision for 2050',
+      summary || 'No summary provided.',
+      editableHeadings || [],
+      editableVision || [],
+      imageDataUrl,
+      authorName || ''
+    );
   } catch (err) {
     console.error('❌ Failed to download PDF:', err);
     alert('Failed to generate PDF. Please try again.');
@@ -294,6 +301,7 @@ setImageCaption(data.caption || '');
 }}>
   📄 Download as PDF
 </button>
+
 
 
 <div className="email-section" style={{ marginTop: '16px' }}>
