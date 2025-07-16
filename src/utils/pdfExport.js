@@ -80,3 +80,22 @@ export async function downloadAsPDF(title, summary, headings = [], paragraphs = 
 
   doc.save('vision-2050.pdf');
 }
+
+// Helper: Convert image URL to base64 Data URL
+export function loadImageAsDataURL(url) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL('image/jpeg'));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
