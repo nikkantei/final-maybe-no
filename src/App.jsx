@@ -168,10 +168,7 @@ export default function App() {
               >
                 {visionTitle || '🌟 Your 2050 Vision'}
               </h2>
-              <div
-                className="bg-gray-100 rounded-xl p-4 text-base text-gray-800 border border-gray-300 shadow-sm whitespace-pre-wrap"
-                style={{ marginTop: '10px' }}
-              >
+              <div className="bg-gray-100 rounded-xl p-4 text-base text-gray-800 border border-gray-300 shadow-sm whitespace-pre-wrap" style={{ marginTop: '10px' }}>
                 {summary}
               </div>
             </div>
@@ -182,18 +179,15 @@ export default function App() {
               <h2>🌍 Vision for 2050</h2>
               <button onClick={async () => {
                 try {
-const imageDataUrl = imageUrl ? await loadImageAsDataURL(imageUrl) : '';
-await downloadAsPDF(
-  visionTitle || 'Vision for 2050',
-  summary || 'No summary provided.',
-  editableHeadings || [],
-  editableVision || [],
-  imageDataUrl, // actual image data
-  authorName || ''
-);
-
-
-
+                  const imageDataUrl = imageUrl ? await loadImageAsDataURL(imageUrl) : '';
+                  await downloadAsPDF(
+                    visionTitle || 'Vision for 2050',
+                    summary || 'No summary provided.',
+                    editableHeadings || [],
+                    editableVision || [],
+                    imageDataUrl,
+                    authorName || ''
+                  );
                 } catch (err) {
                   console.error('❌ Failed to download PDF:', err);
                   alert('Failed to generate PDF. Please try again.');
