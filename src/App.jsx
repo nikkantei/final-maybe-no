@@ -182,15 +182,15 @@ export default function App() {
               <h2>🌍 Vision for 2050</h2>
               <button onClick={async () => {
                 try {
-                  const imageDataUrl = imageUrl ? await loadImageAsDataURL(imageUrl) : '';
                await downloadAsPDF(
   visionTitle || 'Vision for 2050',
   summary || 'No summary provided.',
   editableHeadings || [],
   editableVision || [],
-  'skip', // signal to skip image
+  '', // pass empty string if no image
   authorName || ''
 );
+
 
                 } catch (err) {
                   console.error('❌ Failed to download PDF:', err);
