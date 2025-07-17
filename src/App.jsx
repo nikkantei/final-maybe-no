@@ -183,14 +183,15 @@ export default function App() {
               <button onClick={async () => {
                 try {
                   const imageDataUrl = imageUrl ? await loadImageAsDataURL(imageUrl) : '';
-                  await downloadAsPDF(
-                    visionTitle || 'Vision for 2050',
-                    summary || 'No summary provided.',
-                    editableHeadings || [],
-                    editableVision || [],
-                    '', // no image in PDF
-                    authorName || ''
-                  );
+               await downloadAsPDF(
+  visionTitle || 'Vision for 2050',
+  summary || 'No summary provided.',
+  editableHeadings || [],
+  editableVision || [],
+  'skip', // signal to skip image
+  authorName || ''
+);
+
                 } catch (err) {
                   console.error('❌ Failed to download PDF:', err);
                   alert('Failed to generate PDF. Please try again.');
