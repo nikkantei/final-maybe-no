@@ -182,14 +182,16 @@ export default function App() {
               <h2>🌍 Vision for 2050</h2>
               <button onClick={async () => {
                 try {
-               await downloadAsPDF(
+const imageDataUrl = imageUrl ? await loadImageAsDataURL(imageUrl) : '';
+await downloadAsPDF(
   visionTitle || 'Vision for 2050',
   summary || 'No summary provided.',
   editableHeadings || [],
   editableVision || [],
-  '', // pass empty string if no image
+  imageDataUrl, // actual image data
   authorName || ''
 );
+
 
 
                 } catch (err) {
